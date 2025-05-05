@@ -8,6 +8,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" async></script>
     <link rel="icon" href="img/anh.jpg" type="image/x-icon">
     <style>
+        :root {
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+
+        }
+
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
@@ -24,18 +30,41 @@
         }
 
         .input-section {
-            background-color: #f8f9fa;
+            background-color: #eff4f8;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+        .input-section2 {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Thêm hoặc điều chỉnh width nếu cần */
+            transform: scale(0.95);
+            /* Thu nhỏ lại 95% */
+            transform-origin: top center;
+            /* Điểm neo khi scale */
+        }
+
+        .input-section3 {
+            background-color: #1c3651;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+
         .equation-input {
             display: flex;
-            flex-wrap: wrap;
+            color: black;
+            -wrap: wrap;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             margin-bottom: 15px;
         }
 
@@ -132,6 +161,95 @@
             border-radius: 4px;
             margin-top: 30px;
         }
+
+        .container {
+            display: flex;
+            color: black;
+            gap: 30px;
+            /* Khoảng cách giữa các ô nhập */
+        }
+
+        .final-result {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #3498db;
+        }
+
+        .final-result-title {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-variables {
+            display: flex;
+            justify-content: center;
+            /* Thay space-around bằng center để các ô gần nhau hơn */
+            gap: 5px;
+            /* Giảm khoảng cách giữa các ô xuống 5px (có thể điều chỉnh nhỏ hơn nếu muốn) */
+            margin: 5px 0;
+            /* Giảm margin top và bottom */
+            padding: 0;
+            /* Loại bỏ padding nếu có */
+
+
+        }
+
+        .result-variable {
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 14px;
+            min-width: 120px;
+            font-size: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05), 0 0 10px rgba(216, 216, 216, 0.5);
+            /* Thêm viền xám phát sáng */
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .result-variable:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-variable-name {
+            font-size: 1.9em;
+            color: #2a4e86;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .result-variable-value {
+            font-size: 1.4em;
+            color: #2c3e50;
+            font-family: 'Courier New', monospace;
+        }
+
+        .result-matrix {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05), 0 0 10px rgba(216, 216, 216, 0.5);
+            border-left: 5px solid #3498db;
+
+        }
+
+        .result-divfinal {
+            background: rgb(80, 255, 80);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
     </style>
 </head>
 
@@ -141,63 +259,73 @@
     <div class="input-section">
         <h2>Hệ ba phương trình</h2>
 
-        <div class="input-section">
-            <h2>Nhập hệ số phương trình: </h2>
+        <div class="input-section3">
+            <div class="input-section2">
+                <h2>Nhập hệ số phương trình: </h2>
 
-            <!-- Phương trình 1 -->
-            <div class="equation-input">
-                <!-- <label>Phương trình 1:</label> -->
-                <span>\(a_1\)</span>
-                <input type="number" id="a1" placeholder="a1" step="any" value="20">
-                <span>\(b_1\)</span>
-                <input type="number" id="b1" placeholder="b1" step="any" value="-1">
-                <span>\(c_1\)</span>
-                <input type="number" id="c1" placeholder="c1" step="any" value="2">
-                <span>\(d_1\)</span>
-                <input type="number" id="d1" placeholder="d1" step="any" value="20">
+                <!-- Phương trình 1 -->
+                <div class="equation-input">
+                    <!-- <label>Phương trình 1:</label> -->
+                    <span>\(a_1\)</span>
+                    <input type="number" id="a1" placeholder="a1" step="any" value="20">
+                    <span>\(b_1\)</span>
+                    <input type="number" id="b1" placeholder="b1" step="any" value="-1">
+                    <span>\(c_1\)</span>
+                    <input type="number" id="c1" placeholder="c1" step="any" value="2">
+                    <span>\(d_1\)</span>
+                    <input type="number" id="d1" placeholder="d1" step="any" value="20">
+                </div>
+
+                <!-- Phương trình 2 -->
+                <div class="equation-input">
+                    <!-- <label>Phương trình 2:</label> -->
+                    <span>\(a_2\)</span>
+                    <input type="number" id="a2" placeholder="a2" step="any" value="1">
+                    <span>\(b_2\)</span>
+                    <input type="number" id="b2" placeholder="b2" step="any" value="10">
+                    <span>\(c_2\)</span>
+                    <input type="number" id="c2" placeholder="c2" step="any" value="3">
+                    <span>\(d_2\)</span>
+                    <input type="number" id="d2" placeholder="d2" step="any" value="10">
+                </div>
+
+                <!-- Phương trình 3 -->
+                <div class="equation-input">
+                    <!-- <label>Phương trình 3:</label> -->
+                    <span>\(a_3\)</span>
+                    <input type="number" id="a3" placeholder="a3" step="any" value="1">
+                    <span>\(b_3\)</span>
+                    <input type="number" id="b3" placeholder="b3" step="any" value="1">
+                    <span>\(c_3\)</span>
+                    <input type="number" id="c3" placeholder="c3" step="any" value="-40">
+                    <span>\(d_3\)</span>
+                    <input type="number" id="d3" placeholder="d3" step="any" value="80">
+                </div>
+
+                <div class="container">
+                    <div style="margin-top: 20px;">
+                        <label for="iterations">Số lần lặp:</label>
+                        <input type="number" id="iterations" min="1" value="3">
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <label for="floatpoint">Dấu chấm động :</label>
+                        <input type="number" id="floatpoint" min="6" value="6" max="34">
+                    </div>
+                </div>
+
+
+                <button onclick="solve()">Giải</button>
             </div>
-
-            <!-- Phương trình 2 -->
-            <div class="equation-input">
-                <!-- <label>Phương trình 2:</label> -->
-                <span>\(a_2\)</span>
-                <input type="number" id="a2" placeholder="a2" step="any" value="1">
-                <span>\(b_2\)</span>
-                <input type="number" id="b2" placeholder="b2" step="any" value="10">
-                <span>\(c_2\)</span>
-                <input type="number" id="c2" placeholder="c2" step="any" value="3">
-                <span>\(d_2\)</span>
-                <input type="number" id="d2" placeholder="d2" step="any" value="10">
-            </div>
-
-            <!-- Phương trình 3 -->
-            <div class="equation-input">
-                <!-- <label>Phương trình 3:</label> -->
-                <span>\(a_3\)</span>
-                <input type="number" id="a3" placeholder="a3" step="any" value="1">
-                <span>\(b_3\)</span>
-                <input type="number" id="b3" placeholder="b3" step="any" value="1">
-                <span>\(c_3\)</span>
-                <input type="number" id="c3" placeholder="c3" step="any" value="-40">
-                <span>\(d_3\)</span>
-                <input type="number" id="d3" placeholder="d3" step="any" value="80">
-            </div>
-
-            <div style="margin-top: 20px;">
-                <label for="iterations">Số lần lặp:</label>
-                <input type="number" id="iterations" min="1" value="3">
-            </div>
-
-            <button onclick="solve()">Giải</button>
         </div>
 
         <div id="results" class="results"></div>
 
         <script>
             function froundf(value) {
+                const dcd = parseInt(document.getElementById('floatpoint').value) || 6;
                 const num = parseFloat(value);
                 if (isNaN(num)) return "0";
-                let str = num.toFixed(6);
+                let str = num.toFixed(dcd);
                 str = str.replace(/\.?0+$/, '');
                 if (str.endsWith('.')) str = str.slice(0, -1);
                 return str === '' ? '0' : str;
@@ -219,6 +347,8 @@
                     const c3 = parseFloat(document.getElementById('c3').value) || 0;
                     const d3 = parseFloat(document.getElementById('d3').value) || 0;
                     const n = parseInt(document.getElementById('iterations').value) || 5;
+
+
 
                     // Kiểm tra dữ liệu đầu vào
                     if ([a1, b1, c1, d1, a2, b2, c2, d2, a3, b3, c3, d3].some(isNaN)) {
@@ -279,7 +409,7 @@
                     const B_norm3 = Math.abs(B[2][0]) + Math.abs(B[2][1]);
                     const cvc_B = Math.max(B_norm1, B_norm2, B_norm3);
 
-                    resultsDiv.innerHTML += `<div class="section-title">Ma trận B, chuẩn vô cùng</div>`;
+                    resultsDiv.innerHTML += `<div class="section-title">Ma trận B và chuẩn vô cùng</div>`;
                     resultsDiv.innerHTML += `
                         <div class="math-display">
                             \\[ B = \\begin{pmatrix}
@@ -393,17 +523,42 @@
                         resultsDiv.innerHTML += `
                             <div class="math-display">
                                 \\[ |X^{(${n})} - X^{(*)}| \\leq \\frac{\\|U\\|_\\infty}{1 - \\|B\\|_\\infty}  |X^{(${n})} - X^{(${n - 1})}| \\]
-                                \\[ \\leq \\frac{${froundf(cvc_U)}}{1 - ${froundf(cvc_B)}} \\left\\| \\begin{pmatrix}${froundf(dx)} \\\\ ${froundf(dy)} \\\\ ${froundf(dz)}) \\end{pmatrix}\\right\\| _\\infty \\]
+                                \\[ \\leq \\frac{${froundf(cvc_U)}}{1 - ${froundf(cvc_B)}} \\left\\| \\begin{pmatrix}${froundf(dx)} \\\\ ${froundf(dy)} \\\\ ${froundf(dz)} \\end{pmatrix}\\right\\| _\\infty \\]
                                 \\[ \\leq ${froundf(error_bound)} \\]
                             </div>
                         `;
                     }
+                    // Thêm phần này sau phần "Đánh giá sai số" trong hàm solve()
+                    resultsDiv.innerHTML += `<div style="background-color: #2ecc71; color: white; padding: 8px 15px; border-radius: 4px; margin-top: 30px;">Tính toán thành công ✅</div>`;
+                    resultsDiv.innerHTML += `
+                        <div class="final-result">
+                            <div class="final-result-title">KẾT QUẢ CUỐI CÙNG</div>
+                                <div class="result-divfinal">
+                                    \\( \\text{Sau } ${n} \\text{ lần lặp : } \\) 
+                                    <div class="result-matrix">
+                                        <div class="result-variables">
+                                            <div class="result-variable">
+                                                <div class="result-variable-name"> \\[x \\approx ${froundf(C[n - 1][0])} \\]</div>
+                                            </div>
+                                            <div class="result-variable">
+                                                <div class="result-variable-name"> \\[y \\approx ${froundf(C[n - 1][1])} \\]</div>
+                                            </div>
+                                            <div class="result-variable">
+                                                <div class="result-variable-name"> \\[z \\approx ${froundf(C[n - 1][2])}\\]</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    `;
 
                     // Render MathJax
                     if (typeof MathJax !== 'undefined') {
                         MathJax.typesetPromise().catch(err => console.error("MathJax error:", err));
                     }
-                } catch (error) {
+                }
+
+                catch (error) {
                     console.error("Error in solve:", error);
                     document.getElementById('results').innerHTML = '<div class="error">Đã xảy ra lỗi: ' + error.message + '</div>';
                 }
