@@ -533,7 +533,7 @@
 
                     resultsDiv.innerHTML += `
                         <div class="final-result">
-                            <div class="final-result-title">KẾT QUẢ CUỐI CÙNG</div>
+                            <div class="final-result-title">KẾT QUẢ TÍNH TOÁN</div>
                                 <div class="result-divfinal">
                                     \\( \\text{Sau } ${n} \\text{ lần lặp : } \\) 
                                     <div class="result-matrix">
@@ -561,7 +561,8 @@
 
                 catch (error) {
                     console.error("Error in solve:", error);
-                    document.getElementById('results').innerHTML = '<div class="error">Đã xảy ra lỗi: ' + error.message + '</div>';
+                    document.getElementById('results').innerHTML = '<div style="background-color: #e74c3c; color: white; padding: 8px 15px; border-radius: 4px; margin-top: 30px;">Lỗi khi tính toán: phát hiện lỗi ' + error.message + '</div>';
+
                 }
             }
         </script>
