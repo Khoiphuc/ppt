@@ -160,6 +160,8 @@
         .result-column {
             flex: 1;
             min-width: 0;
+            position: relative;
+            /* Giúp trình duyệt xử lý overflow tốt hơn */
         }
 
         .result-section.show {
@@ -169,7 +171,7 @@
         }
 
         table {
-            /* width: 100%; */
+            min-width: 100%;
             border-collapse: separate;
             border-spacing: 0;
             margin-top: 0;
@@ -194,7 +196,7 @@
             text-align: center;
             border: 1px solid #eee;
             background-color: white;
-            word-break: break-word;
+            /* word-break: break-word; */
             white-space: nowrap;
         }
 
@@ -231,6 +233,7 @@
             border-radius: 0 0 6px 6px;
             box-sizing: border-box;
             margin-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* --- BẮT ĐẦU THAY ĐỔI CSS --- */
