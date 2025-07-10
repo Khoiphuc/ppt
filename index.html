@@ -193,7 +193,9 @@
             text-align: center;
             border: 1px solid #eee;
             background-color: white;
+            /* Thêm để xử lý tràn chữ trong ô nếu có */
             word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         tr:nth-child(even) td {
