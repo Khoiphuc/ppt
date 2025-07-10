@@ -358,6 +358,13 @@
             /* Căn giữa các mục theo chiều dọc */
         }
 
+        /* Thêm đoạn CSS này để giữ giao diện cho trường readonly */
+        .number-input-wrapper input[readonly] {
+            background-color: white;
+            cursor: default;
+            /* Đổi con trỏ để báo hiệu không thể gõ chữ */
+        }
+
         /* --- KẾT THÚC CSS CHO BỐ CỤC GRID --- */
 
         /* --- KẾT THÚC CSS CHO BỘ ĐIỀU KHIỂN SỐ --- */
@@ -432,7 +439,7 @@
                     <label for="floatpoint">Làm tròn số:</label>
                     <div class="number-input-wrapper">
                         <button type="button" class="btn-minus" data-input-id="floatpoint">-</button>
-                        <input type="number" id="floatpoint" min="0" max="34" step="1" value="6">
+                        <input type="number" id="floatpoint" min="0" max="34" step="1" value="6" readonly>
                         <button type="button" class="btn-plus" data-input-id="floatpoint">+</button>
                     </div>
                 </div>
@@ -484,14 +491,14 @@
             return str === '' || str === '-' ? '0' : str;
         }
 
-        function fr(value) {
-            const num = parseFloat(value);
-            if (isNaN(num)) return "0";
-            let str = num.toFixed(9);
-            str = str.replace(/\.?0+$/, '');
-            if (str.endsWith('.')) str = str.slice(0, -1);
-            return str === '' || str === '-' ? '0' : str;
-        }
+        // function fr(value) {
+        //     const num = parseFloat(value);
+        //     if (isNaN(num)) return "0";
+        //     let str = num.toFixed(9);
+        //     str = str.replace(/\.?0+$/, '');
+        //     if (str.endsWith('.')) str = str.slice(0, -1);
+        //     return str === '' || str === '-' ? '0' : str;
+        // }
 
         function calculate() {
             const resultSection = document.getElementById('result');
@@ -521,7 +528,7 @@
                         let fNodeOriginal = math.parse(fInput);
 
                         const formulaHTML = `<p style="margin: 0; text-align: center;">
-                            \\[ f(x) = ${fNodeOriginal.toTex()}; \\quad h = \\frac{${fr(b)} - ${fr(a)}}{${n}} = ${fr(h)} \\]
+                            \\[ f(x) = ${fNodeOriginal.toTex()}; \\quad h = \\frac{${froundf(b)} - ${froundf(a)}}{${n}} = ${froundf(h)} \\]
                         </p>`;
                         document.getElementById('formula-header').innerHTML = formulaHTML;
 
@@ -542,7 +549,7 @@
                             const x_i = a + j * h;
                             let y_i = math.evaluate(fInput, { x: x_i });
                             if (typeof y_i !== 'number' || !isFinite(y_i)) {
-                                throw new Error(`Lỗi tính toán tại x = ${fr(x_i)}`);
+                                throw new Error(`Lỗi tính toán tại x = ${froundf(x_i)}`);
                             }
                             outputRows.push({ y: y_i });
                             if (j > 0 && j < n) {
@@ -551,7 +558,7 @@
                             tableHTML += `
                                 <tr>
                                     <td>\\(${j}\\)</td>
-                                    <td>\\(${fr(x_i)}\\)</td>
+                                    <td>\\(${froundf(x_i)}\\)</td>
                                     <td>${j % 2 === 0 ? `\\(${froundf(y_i)}\\)` : ''}</td>
                                     <td>${j % 2 !== 0 ? `\\(${froundf(y_i)}\\)` : ''}</td>
                                 </tr>`;
@@ -569,7 +576,7 @@
                             <p>\\[ 4 \\Sigma_{lẻ} = 4 \\times ${froundf(s_le)} = ${froundf(4 * s_le)} \\]</p>`;
                         document.getElementById('final-calculation').innerHTML = `
                             <p>\\[ I = \\frac{h}{3} \\left[ (\\text{Đầu + cuối}) + 2\\Sigma_{chẵn} + 4\\Sigma_{lẻ} \\right] \\]</p>
-                            <p>\\[ I = \\frac{${fr(h)}}{3} \\left[ ${froundf(y_0 + y_n)} + ${froundf(2 * s_chan)} + ${froundf(4 * s_le)} \\right] \\]</p>
+                            <p>\\[ I = \\frac{${froundf(h)}}{3} \\left[ ${froundf(y_0 + y_n)} + ${froundf(2 * s_chan)} + ${froundf(4 * s_le)} \\right] \\]</p>
                             <p>\\[ I = ${froundf(I)} \\]</p>
                             <div style="background-color: #e8f8f5; padding:15px; border-radius:6px; border-left:4px solid var(--success-color);">
                                 <h4 style="margin:0;color:var(--success-color);">Kết quả xấp xỉ</h4>
@@ -631,8 +638,8 @@
                     timeoutId = setTimeout(() => {
                         intervalId = setInterval(() => {
                             changeValue(amount);
-                        }, 100); // Tốc độ thay đổi khi giữ nút
-                    }, 500); // Thời gian chờ trước khi bắt đầu lặp
+                        }, 50); // Tốc độ thay đổi khi giữ nút
+                    }, 300); // Thời gian chờ trước khi bắt đầu lặp
                 };
 
                 const stopChanging = () => {
@@ -650,6 +657,15 @@
 
             // Thiết lập cho "Số lần lặp (n)"
             setupCustomNumberInput('n', 2, 2);
+
+            // THÊM MỚI: Xử lý khi người dùng rời khỏi ô nhập liệu 'n'
+            const nInput = document.getElementById('n');
+            nInput.addEventListener('blur', () => {
+                // Nếu ô trống, đặt lại giá trị là 10
+                if (nInput.value.trim() === '') {
+                    nInput.value = 10;
+                }
+            });
 
             // Thiết lập cho "Làm tròn(số)"
             setupCustomNumberInput('floatpoint', 1, 0, 34);
