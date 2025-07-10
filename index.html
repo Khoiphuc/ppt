@@ -19,13 +19,11 @@
             --error-color: #e74c3c;
         }
 
-        /* THAY ĐỔI: Đảm bảo body và html chiếm toàn bộ chiều cao */
         html,
         body {
             min-height: 100vh;
         }
 
-        /* THAY ĐỔI: Áp dụng box-sizing cho tất cả các phần tử */
         *,
         *::before,
         *::after {
@@ -35,11 +33,9 @@
         body {
             background: linear-gradient(90deg, #4FC3F7, #94df97, #FFFFFF);
             background-attachment: fixed;
-            /* THAY ĐỔI: Giữ nền cố định khi cuộn */
             font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 1500px;
             margin: 0 auto;
-            /* THAY ĐỔI: Xóa margin top/bottom mặc định */
             padding: 20px;
             line-height: 1.6;
             color: var(--text-color);
@@ -56,6 +52,13 @@
             display: flex;
             gap: 20px;
             align-items: flex-start;
+        }
+
+        h1 {
+            /* Thêm một chút khoảng cách cho đẹp hơn */
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2c3e50;
         }
 
         h3 {
@@ -105,7 +108,6 @@
             box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
 
-        /* THAY ĐỔI: Nhóm các nút lại để dễ quản lý */
         .button-group {
             display: flex;
             gap: 10px;
@@ -114,10 +116,8 @@
 
         .button-group button {
             flex: 1;
-            /* Chia đều không gian cho các nút */
             margin: 0;
             width: auto;
-            /* Bỏ width cố định */
         }
 
         button {
@@ -231,9 +231,139 @@
             margin-bottom: 20px;
         }
 
-        /* === THAY ĐỔI: Tinh chỉnh Media Queries cho Mobile === */
+        /* --- BẮT ĐẦU THAY ĐỔI CSS --- */
 
-        /* Cho tablet và mobile màn hình lớn */
+        /* Xóa transition cũ và chỉ dùng để ẩn/hiện */
+        .result-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            flex: 1;
+            min-width: 0;
+            display: none;
+            /* Bắt đầu ẩn */
+        }
+
+        /* Khi class .show được thêm, chỉ cần đổi thành display: block */
+        .result-section.show {
+            display: block;
+        }
+
+        /* Định nghĩa animation chính */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Áp dụng animation cho các phần tử con bên trong result-section */
+        .result-section.show .anim-item {
+            opacity: 0;
+            /* Đảm bảo ẩn trước khi animation bắt đầu */
+            animation-name: fadeInUp;
+            animation-duration: 0.6s;
+            animation-timing-function: ease-out;
+            animation-fill-mode: forwards;
+            /* Giữ trạng thái cuối cùng của animation */
+        }
+
+        /* Tạo hiệu ứng xuất hiện tuần tự bằng animation-delay */
+        .result-section.show #result-left-col .anim-item {
+            animation-delay: 0.1s;
+        }
+
+        .result-section.show #sums-calculation.anim-item {
+            animation-delay: 0.3s;
+        }
+
+        .result-section.show #final-calculation.anim-item {
+            animation-delay: 0.5s;
+        }
+
+        /* --- BẮT ĐẦU CSS CHO BỘ ĐIỀU KHIỂN SỐ --- */
+
+        .number-input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: white;
+        }
+
+        .number-input-wrapper input {
+            width: 100%;
+            text-align: center;
+            border: none;
+            padding: 12px 5px;
+            /* Giảm padding ngang */
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Loại bỏ mũi tên tăng/giảm mặc định của trình duyệt */
+        .number-input-wrapper input::-webkit-outer-spin-button,
+        .number-input-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .number-input-wrapper input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .number-input-wrapper button {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 15px;
+            height: 100%;
+            transition: background-color 0.2s, color 0.2s;
+            user-select: none;
+            /* Ngăn bôi đen dấu +/- khi click nhanh */
+        }
+
+        .number-input-wrapper button:hover {
+            background-color: #f0f0f0;
+            color: var(--secondary-color);
+        }
+
+        .number-input-wrapper .btn-minus {
+            border-right: 1px solid var(--border-color);
+            border-radius: 5px 0 0 5px;
+        }
+
+        .number-input-wrapper .btn-plus {
+            border-left: 1px solid var(--border-color);
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* --- BẮT ĐẦU CSS CHO BỐ CỤC GRID --- */
+        .grid-input-container {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            /* Cột 1: Tự động co giãn theo label, Cột 2: Lấp đầy phần còn lại */
+            grid-gap: 15px 10px;
+            /* 15px khoảng cách giữa các hàng, 10px giữa các cột */
+            align-items: center;
+            /* Căn giữa các mục theo chiều dọc */
+        }
+
+        /* --- KẾT THÚC CSS CHO BỐ CỤC GRID --- */
+
+        /* --- KẾT THÚC CSS CHO BỘ ĐIỀU KHIỂN SỐ --- */
+
+        /* --- KẾT THÚC THAY ĐỔI CSS --- */
+
         @media (max-width: 1024px) {
             .main-container {
                 flex-direction: column;
@@ -247,12 +377,10 @@
         @media (max-width: 768px) {
             body {
                 padding: 10px;
-                /* Giảm padding tổng thể */
             }
 
             .result-columns-wrapper {
                 flex-direction: column;
-                /* Xếp chồng 2 cột kết quả */
             }
 
             .input-section {
@@ -273,44 +401,54 @@
 
 <body>
     <div class="main-container">
-        <div class="input-section">
-            <div class="input-group">
-                <label for="function">Hàm số f(x):</label>
-                <input type="text" id="function" placeholder="exp(2x)/(exp(x)+1)" value="e^(2x)/(e^x+1)">
-                <small style="color: #7f8c8d; font-size: 0.9em;">Dùng cú pháp toán học của JS</small>
-            </div>
-            <div class="input-row">
-                <div class="input-group" style="flex: 1;">
-                    <label for="lower">Cận dưới (a):</label>
-                    <input type="number" id="lower" step="any" value="1">
+        <div>
+            <h1>TP Simpson 1/3</h1>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="function">Hàm số f(x):</label>
+                    <input type="text" id="function" placeholder="exp(2x)/(exp(x)+1)" value="e^(2x)/(e^x+1)">
+                    <small style="color: #7f8c8d; font-size: 0.9em;">Dùng cú pháp toán của JavaScript: log, sin, cos,
+                        exp, sqrt,
+                        ^ cho lũy thừa</small>
                 </div>
-                <div class="input-group" style="flex: 1;">
-                    <label for="upper">Cận trên (b):</label>
-                    <input type="number" id="upper" step="any" value="3">
+                <div class="input-row">
+                    <div class="input-group" style="flex: 1;">
+                        <label for="lower">Cận dưới (a):</label>
+                        <input type="number" id="lower" step="any" value="1">
+                    </div>
+                    <div class="input-group" style="flex: 1;">
+                        <label for="upper">Cận trên (b):</label>
+                        <input type="number" id="upper" step="any" value="3">
+                    </div>
                 </div>
-            </div>
-            <div class="input-row">
-                <div class="input-group" style="flex: 1;">
-                    <label for="n">Số lần lặp (n):</label>
-                    <input type="number" id="n" min="2" step="2" value="10">
-                </div>
-                <div class="input-group" style="flex: 1;">
-                    <label for="floatpoint">Số chữ số làm tròn:</label>
-                    <input type="number" id="floatpoint" min="0" max="34" step="1" value="6">
-                </div>
-            </div>
+                <div class="input-group grid-input-container">
+                    <label for="n">Số lần lặp(n):</label>
+                    <div class="number-input-wrapper">
+                        <button type="button" class="btn-minus" data-input-id="n">-</button>
+                        <input type="number" id="n" min="2" step="2" value="10">
+                        <button type="button" class="btn-plus" data-input-id="n">+</button>
+                    </div>
 
-            <div class="button-group">
-                <button onclick="goToHomeWithTransition()"
-                    style="background: linear-gradient(135deg, #00B4DB, #0083B0, #00FF7F);">Trở về</button>
-                <button onclick="calculate()">Tính toán</button>
+                    <label for="floatpoint">Làm tròn số:</label>
+                    <div class="number-input-wrapper">
+                        <button type="button" class="btn-minus" data-input-id="floatpoint">-</button>
+                        <input type="number" id="floatpoint" min="0" max="34" step="1" value="6">
+                        <button type="button" class="btn-plus" data-input-id="floatpoint">+</button>
+                    </div>
+                </div>
+                <div class="button-group">
+
+                    <button onclick="calculate()">Tính toán</button>
+                </div>
             </div>
+            <button onclick="goToHomeWithTransition()"
+                style="background: linear-gradient(135deg, #00B4DB, #0083B0, #00FF7F);">Trở về</button>
         </div>
 
         <div id="result" class="result-section">
             <div class="result-columns-wrapper">
                 <div id="result-left-col" class="result-column">
-                    <div>
+                    <div class="anim-item">
                         <h3>Bảng giá trị tại các điểm</h3>
                         <div id="formula-header"></div>
                         <div class="scrollable-table-wrapper">
@@ -320,9 +458,9 @@
                 </div>
                 <div id="result-right-col" class="result-column">
                     <h3>Tính các tổng</h3>
-                    <div id="sums-calculation" class="math-formula"></div>
+                    <div id="sums-calculation" class="math-formula anim-item"></div>
                     <h3>Kết quả cuối cùng</h3>
-                    <div id="final-calculation" class="math-formula"></div>
+                    <div id="final-calculation" class="math-formula anim-item"></div>
                 </div>
             </div>
         </div>
@@ -382,11 +520,23 @@
                         const h = (b - a) / n;
                         let fNodeOriginal = math.parse(fInput);
 
-                        const formulaHTML = `<p style="margin: 0; text-align: center;">\\[ f(x) = ${fNodeOriginal.toTex()}; \\quad h = \\frac{${fr(b)} - ${fr(a)}}{${n}} = ${fr(h)} \\]</p>`;
+                        const formulaHTML = `<p style="margin: 0; text-align: center;">
+                            \\[ f(x) = ${fNodeOriginal.toTex()}; \\quad h = \\frac{${fr(b)} - ${fr(a)}}{${n}} = ${fr(h)} \\]
+                        </p>`;
                         document.getElementById('formula-header').innerHTML = formulaHTML;
 
                         let s_chan = 0, s_le = 0, outputRows = [];
-                        let tableHTML = `<table><thead><tr><th>\\(i\\)</th><th>\\(x_i\\)</th><th>\\(f(x_i)\\text{(Chẵn)}\\)</th><th>\\(f(x_i)\\text{(Lẻ)}\\)</th></tr></thead><tbody>`;
+                        let tableHTML = `
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>\\(i\\)</th>
+                                        <th>\\(x_i\\)</th>
+                                        <th>\\(f(x_i)\\text{(Chẵn)}\\)</th>
+                                        <th>\\(f(x_i)\\text{(Lẻ)}\\)</th>
+                                    </tr>
+                                </thead>
+                            <tbody>`;
 
                         for (let j = 0; j <= n; j++) {
                             const x_i = a + j * h;
@@ -398,7 +548,13 @@
                             if (j > 0 && j < n) {
                                 j % 2 === 0 ? s_chan += y_i : s_le += y_i;
                             }
-                            tableHTML += `<tr><td>\\(${j}\\)</td><td>\\(${fr(x_i)}\\)</td><td>${j % 2 === 0 ? `\\(${froundf(y_i)}\\)` : ''}</td><td>${j % 2 !== 0 ? `\\(${froundf(y_i)}\\)` : ''}</td></tr>`;
+                            tableHTML += `
+                                <tr>
+                                    <td>\\(${j}\\)</td>
+                                    <td>\\(${fr(x_i)}\\)</td>
+                                    <td>${j % 2 === 0 ? `\\(${froundf(y_i)}\\)` : ''}</td>
+                                    <td>${j % 2 !== 0 ? `\\(${froundf(y_i)}\\)` : ''}</td>
+                                </tr>`;
                         }
                         tableHTML += `</tbody></table>`;
                         document.getElementById('table-container').innerHTML = tableHTML;
@@ -414,12 +570,17 @@
                         document.getElementById('final-calculation').innerHTML = `
                             <p>\\[ I = \\frac{h}{3} \\left[ (\\text{Đầu + cuối}) + 2\\Sigma_{chẵn} + 4\\Sigma_{lẻ} \\right] \\]</p>
                             <p>\\[ I = \\frac{${fr(h)}}{3} \\left[ ${froundf(y_0 + y_n)} + ${froundf(2 * s_chan)} + ${froundf(4 * s_le)} \\right] \\]</p>
-                            <p>\\[ I = ${froundf(I)} \\]</p><div style="background-color: #e8f8f5; padding:15px; border-radius:6px; border-left:4px solid var(--success-color);"><h4 style="margin:0;color:var(--success-color);">Kết quả xấp xỉ</h4><p style="font-size: 1.3em; text-align: center;">\\[ \\boxed{I \\approx ${froundf(I)}} \\]</p></div>`;
+                            <p>\\[ I = ${froundf(I)} \\]</p>
+                            <div style="background-color: #e8f8f5; padding:15px; border-radius:6px; border-left:4px solid var(--success-color);">
+                                <h4 style="margin:0;color:var(--success-color);">Kết quả xấp xỉ</h4>
+                                    <p style="font-size: 1.3em; text-align: center;">
+                                        \\[ \\boxed{I \\approx ${froundf(I)}} \\]
+                                    </p>
+                            </div>`;
 
 
                         resultSection.classList.add('show');
 
-                        // THAY ĐỔI: Tự động cuộn đến kết quả trên mobile
                         if (window.innerWidth <= 1024) {
                             setTimeout(() => {
                                 resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -427,7 +588,7 @@
                         }
 
                     } catch (e) {
-                        alert(e.message); // Đơn giản hóa thông báo lỗi
+                        alert(e.message);
                         resultSection.classList.remove('show');
                     }
 
@@ -437,6 +598,63 @@
                 });
             });
         }
+        /* --- BẮT ĐẦU JAVASCRIPT CHO BỘ ĐIỀU KHIỂN SỐ --- */
+        document.addEventListener('DOMContentLoaded', () => {
+            function setupCustomNumberInput(inputId, step, min, max) {
+                const input = document.getElementById(inputId);
+                const minusBtn = document.querySelector(`.btn-minus[data-input-id="${inputId}"]`);
+                const plusBtn = document.querySelector(`.btn-plus[data-input-id="${inputId}"]`);
+
+                let intervalId = null;
+                let timeoutId = null;
+
+                const changeValue = (amount) => {
+                    let currentValue = parseInt(input.value) || 0;
+                    let newValue = currentValue + amount;
+
+                    // Đảm bảo giá trị không vượt quá giới hạn min/max
+                    if (newValue < min) newValue = min;
+                    if (max !== undefined && newValue > max) newValue = max;
+
+                    // Quy tắc đặc biệt cho 'n': phải là số chẵn
+                    if (inputId === 'n' && newValue % 2 !== 0) {
+                        if (amount > 0) newValue++; // Nếu tăng, làm tròn lên số chẵn tiếp theo
+                        else newValue--; // Nếu giảm, làm tròn xuống số chẵn tiếp theo
+                    }
+                    if (inputId === 'n' && newValue < min) newValue = min; // Kiểm tra lại sau khi điều chỉnh chẵn/lẻ
+
+                    input.value = newValue;
+                };
+
+                const startChanging = (amount) => {
+                    changeValue(amount); // Thay đổi 1 lần ngay lập tức
+                    timeoutId = setTimeout(() => {
+                        intervalId = setInterval(() => {
+                            changeValue(amount);
+                        }, 100); // Tốc độ thay đổi khi giữ nút
+                    }, 500); // Thời gian chờ trước khi bắt đầu lặp
+                };
+
+                const stopChanging = () => {
+                    clearTimeout(timeoutId);
+                    clearInterval(intervalId);
+                };
+
+                minusBtn.addEventListener('mousedown', () => startChanging(-step));
+                plusBtn.addEventListener('mousedown', () => startChanging(step));
+
+                document.addEventListener('mouseup', stopChanging);
+                minusBtn.addEventListener('mouseleave', stopChanging);
+                plusBtn.addEventListener('mouseleave', stopChanging);
+            }
+
+            // Thiết lập cho "Số lần lặp (n)"
+            setupCustomNumberInput('n', 2, 2);
+
+            // Thiết lập cho "Làm tròn(số)"
+            setupCustomNumberInput('floatpoint', 1, 0, 34);
+        });
+        /* --- KẾT THÚC JAVASCRIPT CHO BỘ ĐIỀU KHIỂN SỐ --- */
     </script>
 </body>
 
