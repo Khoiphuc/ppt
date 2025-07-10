@@ -19,15 +19,23 @@
             --error-color: #e74c3c;
         }
 
+        /* THAY ĐỔI: Đảm bảo body và html chiếm toàn bộ chiều cao */
+        html,
+        body {
+            min-height: 100vh;
+        }
+
         body {
             background: linear-gradient(90deg, #4FC3F7, #94df97, #FFFFFF);
+            background-attachment: fixed;
+            /* THAY ĐỔI: Giữ nền cố định khi cuộn */
             font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             max-width: 1500px;
-            margin: 20px auto;
+            margin: 0 auto;
+            /* THAY ĐỔI: Xóa margin top/bottom mặc định */
             padding: 20px;
             line-height: 1.6;
             color: var(--text-color);
-            background-color: #f5f7fa;
             opacity: 1;
             transition: opacity 0.3s ease-out, transform 0.3s ease-out;
         }
@@ -43,30 +51,9 @@
             align-items: flex-start;
         }
 
-        h1,
-        h2,
         h3 {
             color: #2c3e50;
             font-weight: 500;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--primary-color);
-            position: relative;
-        }
-
-        h1::after {
-            content: "";
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background-color: var(--secondary-color);
         }
 
         .input-section {
@@ -75,8 +62,6 @@
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin: 0;
-            float: none;
             flex-shrink: 0;
         }
 
@@ -113,36 +98,38 @@
             box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
 
+        /* THAY ĐỔI: Nhóm các nút lại để dễ quản lý */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button-group button {
+            flex: 1;
+            /* Chia đều không gian cho các nút */
+            margin: 0;
+            width: auto;
+            /* Bỏ width cố định */
+        }
+
         button {
             background: linear-gradient(to right, #0D47A1, #0288D1, #4FC3F7);
             color: white;
             border: none;
-            padding: 14px 24px;
+            padding: 14px 20px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
-            display: block;
             transition: all 0.3s;
-            width: 220px;
-            max-width: 100%;
             font-weight: 500;
-            letter-spacing: 0.5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-            float: left;
-            margin: 10px;
         }
 
         button:hover {
-            background: linear-gradient(to right, rgba(0, 123, 255, 0.8), rgba(0, 196, 180, 0.2));
+            opacity: 0.9;
             transform: translateY(-2px);
-        }
-
-        body>button:first-of-type {
-            width: auto;
-            min-width: 100px;
-            max-width: 400px;
-            margin-bottom: 20px;
+            background: linear-gradient(to right, rgba(0, 123, 255, 0.8), rgba(0, 196, 180, 0.2));
         }
 
         .result-section {
@@ -150,24 +137,21 @@
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin: 0;
             opacity: 0;
             transform: translateY(30px);
             transition: opacity 0.5s ease-out, transform 0.5s ease-out;
             display: none;
-            float: none;
             flex: 1;
         }
 
         .result-columns-wrapper {
             display: flex;
-            gap: 40px;
+            gap: 20px;
         }
 
         .result-column {
             flex: 1;
             min-width: 0;
-
         }
 
         .result-section.show {
@@ -176,23 +160,13 @@
             transform: translateY(0);
         }
 
-        .result-title {
-            color: #2c3e50;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 12px;
-            margin-top: 0;
-        }
-
         table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
             margin-top: 0;
-            /* THAY ĐỔI: Bỏ margin-top của table */
             font-family: 'Consolas', 'Monaco', monospace;
             font-size: 14px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         th {
@@ -202,7 +176,6 @@
             text-align: center;
             font-weight: 500;
             position: sticky;
-            /* Giữ header dính lại khi cuộn */
             top: 0;
             z-index: 1;
         }
@@ -213,7 +186,6 @@
             border: 1px solid #eee;
             background-color: white;
             word-break: break-word;
-            overflow-wrap: break-word;
         }
 
         tr:nth-child(even) td {
@@ -226,134 +198,87 @@
             border-radius: 8px;
             margin-top: 0;
             margin-bottom: 20px;
-            /* THAY ĐỔI: Chỉnh lại margin */
             overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             border-left: 4px solid var(--primary-color);
         }
 
-        .step {
-            margin-bottom: 25px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        /* === PHẦN MỚI: Định dạng cho header công thức === */
         #formula-header {
             padding: 15px;
             border: 1px solid #ddd;
             border-bottom: none;
-            /* Bỏ border dưới để dính vào bảng */
             border-radius: 6px 6px 0 0;
-            /* Bo tròn góc trên */
             background-color: #fdfdfd;
             margin-bottom: 0;
             overflow-x: auto;
-        }
-
-        .final-result {
-            background-color: #e8f4fc;
-            padding: 25px;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary-color);
-            margin-top: 25px;
-        }
-
-        .error {
-            color: var(--error-color);
-            background-color: #fde8e8;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 4px solid var(--error-color);
         }
 
         .scrollable-table-wrapper {
             width: 100%;
             overflow-x: auto;
             overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
             max-height: 580px;
-            /* THAY ĐỔI: Giảm chiều cao tối đa một chút */
             border: 1px solid #ddd;
             border-radius: 0 0 6px 6px;
-            /* THAY ĐỔI: Bo tròn góc dưới */
             box-sizing: border-box;
             margin-bottom: 20px;
         }
 
+        /* === THAY ĐỔI: Tinh chỉnh Media Queries cho Mobile === */
+
+        /* Cho tablet và mobile màn hình lớn */
         @media (max-width: 1024px) {
 
             .main-container,
             .result-columns-wrapper {
                 flex-direction: column;
+                /* Xếp chồng các khối lên nhau */
             }
 
             .input-section {
                 width: 100%;
+                /* Cho khối input chiếm toàn bộ chiều rộng */
+                box-sizing: border-box;
             }
         }
 
+        /* Cho mobile màn hình nhỏ */
         @media (max-width: 768px) {
             body {
-                padding: 15px;
+                padding: 10px;
+                /* Giảm padding body */
             }
 
-            h1 {
-                font-size: 1.6em;
+            .input-section {
+                padding: 20px;
+                /* Bỏ scale: 0.9; vì nó gây ra lệch lề */
             }
-
 
             .result-section,
-            .step,
-            .final-result,
             .math-formula {
                 padding: 15px;
             }
 
-            .input-section {
-                padding: 25px;
-                scale: 0.9;
-            }
-
-            /* button {
-                width: 100%;
-            } */
-
-            table {
-                font-size: 12px;
+            .button-group {
+                flex-direction: column;
+                /* Xếp chồng các nút */
             }
 
             th,
             td {
-                padding: 8px 10px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-
-            h1 {
-                font-size: 1.4em;
+                padding: 8px;
+                font-size: 12px;
             }
         }
     </style>
 </head>
 
 <body>
-
     <div class="main-container">
         <div class="input-section">
             <div class="input-group">
                 <label for="function">Hàm số f(x):</label>
                 <input type="text" id="function" placeholder="exp(2x)/(exp(x)+1)" value="e^(2x)/(e^x+1)">
-                <small style="color: #7f8c8d; font-size: 0.9em;">Use JavaScript math syntax: log, sin, cos, exp, sqrt, ^
-                    for power</small>
+                <small style="color: #7f8c8d; font-size: 0.9em;">Dùng cú pháp toán học của JS</small>
             </div>
             <div class="input-row">
                 <div class="input-group" style="flex: 1;">
@@ -375,12 +300,12 @@
                     <input type="number" id="floatpoint" min="0" max="34" step="1" value="6">
                 </div>
             </div>
-            <button onclick="goToHomeWithTransition()"
-                style="width: auto; padding: 10px 20px; background: linear-gradient(135deg, #00B4DB, #0083B0, #00FF7F);">Trở
-                về</button>
 
-            <button onclick="calculate()">Tính toán</button>
-
+            <div class="button-group">
+                <button onclick="goToHomeWithTransition()"
+                    style="background: linear-gradient(135deg, #00B4DB, #0083B0, #00FF7F);">Trở về</button>
+                <button onclick="calculate()">Tính toán</button>
+            </div>
         </div>
 
         <div id="result" class="result-section">
@@ -394,7 +319,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div id="result-right-col" class="result-column">
                     <h3>Tính các tổng</h3>
                     <div id="sums-calculation" class="math-formula"></div>
@@ -405,7 +329,6 @@
         </div>
     </div>
     <script>
-        // JavaScript của bạn giữ nguyên, chỉ thay đổi hàm calculate
         function goToHomeWithTransition() {
             document.body.classList.add('page-fade-out');
             setTimeout(function () {
@@ -436,11 +359,8 @@
         function calculate() {
             const resultSection = document.getElementById('result');
             resultSection.classList.remove('show');
-
-            // Xóa nội dung cũ trước khi tính toán mới
             document.getElementById('formula-header').innerHTML = '';
             document.getElementById('table-container').innerHTML = '';
-
 
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
@@ -449,91 +369,71 @@
                         const a = parseFloat(document.getElementById('lower').value);
                         const b = parseFloat(document.getElementById('upper').value);
                         const n = parseInt(document.getElementById('n').value);
-                        const floatpointInput = document.getElementById('floatpoint');
 
-                        if (isNaN(a) || isNaN(b) || isNaN(n) || isNaN(parseInt(floatpointInput.value))) {
-                            throw new Error('Vui lòng nhập giá trị số hợp lệ cho cận, số lần lặp và dấu chấm động.');
+                        if (isNaN(a) || isNaN(b) || isNaN(n)) {
+                            throw new Error('Vui lòng nhập giá trị số hợp lệ.');
                         }
-                        if (n <= 0) { throw new Error('Số lần lặp (n) phải lớn hơn 0.'); }
-                        if (n % 2 !== 0) { throw new Error('Số lần lặp (n) phải là số chẵn đối với phương pháp Simpson 1/3.'); }
-                        if (b <= a) { throw new Error('Cận trên (b) phải lớn hơn cận dưới (a).'); }
+                        if (n <= 0 || n % 2 !== 0) {
+                            throw new Error('Số lần lặp (n) phải là số chẵn lớn hơn 0.');
+                        }
+                        if (b <= a) {
+                            throw new Error('Cận trên (b) phải lớn hơn cận dưới (a).');
+                        }
 
                         const h = (b - a) / n;
                         let fNodeOriginal = math.parse(fInput);
 
-                        // THAY ĐỔI: Tách chuỗi công thức và gán vào div #formula-header
-                        const formulaHTML = `<p style="margin: 0; text-align: center;">\\[ f(x) = ${fNodeOriginal.toTex()}; \\quad h = \\frac{b - a}{n} = \\frac{${froundf(b)} - ${froundf(a)}}{${n}} = ${froundf(h)} \\]</p>`;
+                        const formulaHTML = `<p style="margin: 0; text-align: center;">\\[ f(x) = ${fNodeOriginal.toTex()}; \\quad h = \\frac{${fr(b)} - ${fr(a)}}{${n}} = ${fr(h)} \\]</p>`;
                         document.getElementById('formula-header').innerHTML = formulaHTML;
 
-
-                        let s_chan = 0;
-                        let s_le = 0;
-                        let outputRows = [];
-
-                        // THAY ĐỔI: tableHTML chỉ bắt đầu từ thẻ table
-                        let tableHTML = `
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th> \\(i\\) </th>
-                                        <th> \\(x_i\\) </th>
-                                        <th> \\(f(x_i)\\text{(Chẵn)}\\) </th>
-                                        <th> \\(f(x_i)\\text{(Lẻ)}\\) </th>
-                                    </tr>
-                                </thead>
-                                <tbody>`;
+                        let s_chan = 0, s_le = 0, outputRows = [];
+                        let tableHTML = `<table><thead><tr><th>\\(i\\)</th><th>\\(x_i\\)</th><th>\\(f(x_i)\\text{(Chẵn)}\\)</th><th>\\(f(x_i)\\text{(Lẻ)}\\)</th></tr></thead><tbody>`;
 
                         for (let j = 0; j <= n; j++) {
                             const x_i = a + j * h;
-                            let scope = { x: x_i };
-                            let y_i;
-                            try {
-                                y_i = math.evaluate(fInput, scope);
-                                if (typeof y_i !== 'number' || isNaN(y_i) || !isFinite(y_i)) {
-                                    throw new Error(`Không thể tính giá trị hàm tại x = ${fr(x_i)}. Kết quả: ${y_i}`);
-                                }
-                            } catch (evalError) {
-                                throw new Error(`Lỗi khi tính f(x) tại x = ${fr(x_i)}: ${evalError.message}. Kiểm tra lại biểu thức hàm.`);
+                            let y_i = math.evaluate(fInput, { x: x_i });
+                            if (typeof y_i !== 'number' || !isFinite(y_i)) {
+                                throw new Error(`Lỗi tính toán tại x = ${fr(x_i)}`);
                             }
-
-                            outputRows.push({ i: j, x: x_i, y: y_i, isEven: j % 2 === 0 });
-
+                            outputRows.push({ y: y_i });
                             if (j > 0 && j < n) {
-                                if (j % 2 === 0) { s_chan += y_i; }
-                                else { s_le += y_i; }
+                                j % 2 === 0 ? s_chan += y_i : s_le += y_i;
                             }
-                            tableHTML += `
-                                <tr>   
-                                    <td> \\(${j}\\) </td>
-                                    <td> \\(${froundf(x_i)}\\) </td>
-                                    <td> ${j % 2 === 0 ? `\\(${froundf(y_i)}\\)` : ''} </td>
-                                    <td> ${j % 2 !== 0 ? `\\(${froundf(y_i)}\\)` : ''} </td>
-                                </tr>`;
+                            tableHTML += `<tr><td>\\(${j}\\)</td><td>\\(${fr(x_i)}\\)</td><td>${j % 2 === 0 ? `\\(${froundf(y_i)}\\)` : ''}</td><td>${j % 2 !== 0 ? `\\(${froundf(y_i)}\\)` : ''}</td></tr>`;
                         }
-
                         tableHTML += `</tbody></table>`;
                         document.getElementById('table-container').innerHTML = tableHTML;
 
                         const y_0 = outputRows[0].y;
-                        const y_n = outputRows[outputRows.length - 1].y;
+                        const y_n = outputRows[n].y;
                         const I = (h / 3) * (y_0 + 4 * s_le + 2 * s_chan + y_n);
-                        let dc = y_0 + y_n;
 
-                        document.getElementById('sums-calculation').innerHTML = `<p>\\[ {Đầu + cuối} = ${froundf(y_0)} + ${froundf(y_n)} = ${froundf(dc)} \\]</p><p>\\[ 2 \\Sigma_{chẵn} = 2 \\times ${froundf(s_chan)} = ${froundf(2 * s_chan)} \\]</p><p>\\[ 4 \\Sigma_{lẻ} = 4 \\times ${froundf(s_le)} = ${froundf(4 * s_le)} \\]</p>`;
-                        document.getElementById('final-calculation').innerHTML = `<p>\\[ I = \\frac{h}{3} \\left[ (\\text{Đầu + cuối}) + 2\\Sigma_{chẵn} + 4\\Sigma_{lẻ} \\right] \\]</p><p>\\[ I = \\frac{${fr(h)}}{3} \\left[ ${froundf(dc)} + ${froundf(2 * s_chan)} + ${froundf(4 * s_le)} \\right] \\]</p><p>\\[ I = ${froundf(I)} \\]</p><div class="success-box"><h3>Kết quả Tích Phân xấp xỉ</h3><p style="font-size: 1.3em; text-align: center;">\\[ \\boxed{I \\approx ${froundf(I)}} \\]</p></div>`;
+                        document.getElementById('sums-calculation').innerHTML = `
+                            <p>\\[ {Đầu + cuối} = ${froundf(y_0)} + ${froundf(y_n)} = ${froundf(y_0 + y_n)} \\]</p>
+                            <p>\\[ 2 \\Sigma_{chẵn} = 2 \\times ${froundf(s_chan)} = ${froundf(2 * s_chan)} \\]</p>
+                            <p>\\[ 4 \\Sigma_{lẻ} = 4 \\times ${froundf(s_le)} = ${froundf(4 * s_le)} \\]</p>`;
+                        document.getElementById('final-calculation').innerHTML = `
+                            <p>\\[ I = \\frac{h}{3} \\left[ (\\text{Đầu + cuối}) + 2\\Sigma_{chẵn} + 4\\Sigma_{lẻ} \\right] \\]</p>
+                            <p>\\[ I = \\frac{${fr(h)}}{3} \\left[ ${froundf(y_0 + y_n)} + ${froundf(2 * s_chan)} + ${froundf(4 * s_le)} \\right] \\]</p>
+                            <p>\\[ I = ${froundf(I)} \\]</p><div style="background-color: #e8f8f5; padding:15px; border-radius:6px; border-left:4px solid var(--success-color);"><h4 style="margin:0;color:var(--success-color);">Kết quả xấp xỉ</h4><p style="font-size: 1.3em; text-align: center;">\\[ \\boxed{I \\approx ${froundf(I)}} \\]</p></div>`;
+
 
                         resultSection.classList.add('show');
+
+                        // THAY ĐỔI: Tự động cuộn đến kết quả trên mobile
+                        if (window.innerWidth <= 1024) {
+                            setTimeout(() => {
+                                resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }, 200);
+                        }
 
                     } catch (e) {
-                        const resultLeftCol = document.getElementById('result-left-col').querySelector('.step');
-                        resultLeftCol.innerHTML = `<div class="error"><h3>Lỗi</h3><p>${e.message}</p></div>`;
-                        document.getElementById('result-right-col').innerHTML = '';
-
-                        resultSection.classList.add('show');
+                        alert(e.message); // Đơn giản hóa thông báo lỗi
+                        resultSection.classList.remove('show');
                     }
 
                     if (typeof MathJax !== 'undefined') {
-                        MathJax.typesetPromise().catch((err) => console.log('MathJax typesetting error: ', err));
+                        MathJax.typesetPromise().catch(err => console.log('MathJax error: ', err));
                     }
                 });
             });
