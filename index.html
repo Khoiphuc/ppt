@@ -169,7 +169,7 @@
         }
 
         table {
-            width: 100%;
+            /* width: 100%; */
             border-collapse: separate;
             border-spacing: 0;
             margin-top: 0;
@@ -186,6 +186,7 @@
             position: sticky;
             top: 0;
             z-index: 1;
+            white-space: nowrap;
         }
 
         td {
@@ -193,9 +194,8 @@
             text-align: center;
             border: 1px solid #eee;
             background-color: white;
-            /* Thêm để xử lý tràn chữ trong ô nếu có */
             word-break: break-word;
-            overflow-wrap: break-word;
+            white-space: nowrap;
         }
 
         tr:nth-child(even) td {
@@ -458,7 +458,7 @@
             <div class="result-columns-wrapper">
                 <div id="result-left-col" class="result-column">
                     <div class="anim-item">
-                        <h3>Bảng giá trị tại các điểm</h3>
+                        <h3>--- Kết quả tính:</h3>
                         <div id="formula-header"></div>
                         <div class="scrollable-table-wrapper">
                             <div id="table-container"></div>
@@ -466,7 +466,7 @@
                     </div>
                 </div>
                 <div id="result-right-col" class="result-column">
-                    <h3>Tính các tổng</h3>
+                    <h3>---</h3>
                     <div id="sums-calculation" class="math-formula anim-item"></div>
                     <h3>Kết quả cuối cùng</h3>
                     <div id="final-calculation" class="math-formula anim-item"></div>
