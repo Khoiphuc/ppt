@@ -25,6 +25,13 @@
             min-height: 100vh;
         }
 
+        /* THAY ĐỔI: Áp dụng box-sizing cho tất cả các phần tử */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
         body {
             background: linear-gradient(90deg, #4FC3F7, #94df97, #FFFFFF);
             background-attachment: fixed;
@@ -142,6 +149,7 @@
             transition: opacity 0.5s ease-out, transform 0.5s ease-out;
             display: none;
             flex: 1;
+            min-width: 0;
         }
 
         .result-columns-wrapper {
@@ -227,46 +235,33 @@
 
         /* Cho tablet và mobile màn hình lớn */
         @media (max-width: 1024px) {
-
-            .main-container,
-            .result-columns-wrapper {
+            .main-container {
                 flex-direction: column;
-                /* Xếp chồng các khối lên nhau */
             }
 
             .input-section {
                 width: 100%;
-                /* Cho khối input chiếm toàn bộ chiều rộng */
-                box-sizing: border-box;
             }
         }
 
-        /* Cho mobile màn hình nhỏ */
         @media (max-width: 768px) {
             body {
                 padding: 10px;
-                /* Giảm padding body */
+                /* Giảm padding tổng thể */
             }
 
-            .input-section {
-                padding: 20px;
-                /* Bỏ scale: 0.9; vì nó gây ra lệch lề */
+            .result-columns-wrapper {
+                flex-direction: column;
+                /* Xếp chồng 2 cột kết quả */
             }
 
-            .result-section,
-            .math-formula {
+            .input-section,
+            .result-section {
                 padding: 15px;
             }
 
             .button-group {
                 flex-direction: column;
-                /* Xếp chồng các nút */
-            }
-
-            th,
-            td {
-                padding: 8px;
-                font-size: 12px;
             }
         }
     </style>
