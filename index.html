@@ -195,6 +195,15 @@
             background-color: white;
         }
 
+        td:hover {
+            color: #001d49;
+            background: #e8faff;
+        }
+
+        td:active {
+            font-size: 16px;
+        }
+
         tr:nth-child(even) td {
             background-color: var(--background-color);
         }
@@ -209,9 +218,7 @@
             border-left: 4px solid var(--primary-color);
         }
 
-        .math-formula:hover {
-            background-color: #e8faff;
-        }
+
 
         #formula-header {
             padding: 15px;
@@ -222,6 +229,17 @@
             margin-bottom: 0;
             overflow-x: auto;
         }
+
+        #formula-header:hover,
+        .math-formula:hover {
+            background-color: #e8faff;
+        }
+
+        #formula-header:active,
+        .math-formula:active {
+            font-size: 18px;
+        }
+
 
         .scrollable-table-wrapper {
             max-width: 530px;
