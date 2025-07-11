@@ -67,7 +67,7 @@
         }
 
         .input-section {
-            width: 350px;
+            width: 320px;
             background-color: rgb(240, 245, 255);
             padding: 25px;
             border-radius: 10px;
@@ -386,12 +386,12 @@
             }
 
             .scrollable-table-wrapper {
-                max-width: 350px;
+                max-width: 320px;
             }
 
             .result-columns-wrapper {
                 flex-direction: column;
-                max-width: 350px;
+                max-width: 320px;
             }
 
             .input-section {
@@ -665,11 +665,19 @@
             // THÊM MỚI: Xử lý khi người dùng rời khỏi ô nhập liệu 'n'
             const nInput = document.getElementById('n');
             nInput.addEventListener('blur', () => {
-                // Nếu ô trống, đặt lại giá trị là 10
-                if (nInput.value.trim() === '') {
-                    nInput.value = 10;
+                const valueStr = nInput.value.trim(); // Lấy giá trị dạng chuỗi
+
+                if (valueStr === '') {
+                    nInput.value = 10; // Nếu ô trống, đặt lại là 10
+                } else {
+                    let numValue = parseInt(valueStr, 10);
+                    if (numValue % 2 !== 0) {
+                        nInput.value = numValue + 1;
+                    }
                 }
             });
+
+
 
             // Thiết lập cho "Làm tròn(số)"
             setupCustomNumberInput('floatpoint', 1, 0, 34);
