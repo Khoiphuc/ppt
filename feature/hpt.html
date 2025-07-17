@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giải hệ 3 phương trình - PP Gauss-Seidel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js" async></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --background-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #ddd;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+        }
+
+        /* --- CÁC STYLE CHUNG --- */
+        html,
+        body {
+            min-height: 100vh;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        body.page-fade-out {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+
+        h1 {
+            /* Thêm một chút khoảng cách cho đẹp hơn */
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        h2,
+        h3 {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .results h2 {
+            margin-bottom: 5px;
+            /* Hoặc 5px, 0px tùy bạn muốn */
+        }
+
+        /* --- BỐ CỤC CHÍNH 2 CỘT --- */
+        .main-container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            width: 100%;
+            margin: 0;
+        }
+
+        .input-section-wrapper {
+            width: 450px;
+            /* Tăng chiều rộng một chút */
+            flex-shrink: 0;
+        }
+
+        .input-section {
+            background-color: rgb(240, 245, 255);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            width: 450px;
+        }
+
+        /* --- KHỐI NHẬP LIỆU --- */
+        /* --- THAY THẾ CSS CŨ BẰNG CSS MỚI --- */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            text-align: center;
+        }
+
+        .input-group label {
+            margin-bottom: 4px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .equation-input {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .equation-input input {
+            flex: 1;
+            min-width: 40px;
+            width: 100%;
+            /* Thêm thuộc tính này */
+            padding: 8px;
+            /* Điều chỉnh lại padding */
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+
+        button {
+            background: linear-gradient(to right, #0D47A1, #0288D1, #4FC3F7);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-weight: 500;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .home-button {
+            margin-top: 15px;
+            background: linear-gradient(135deg, #00B4DB, #0083B0, #00FF7F);
+        }
+
+        /* --- BỘ ĐIỀU KHIỂN SỐ --- */
+        .number-input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: white;
+        }
+
+        .number-input-wrapper input {
+            flex: 1;
+            min-width: 50px;
+            width: auto;
+            text-align: center;
+            border: none;
+            padding: 12px 5px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .number-input-wrapper input::-webkit-outer-spin-button,
+        .number-input-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* .number-input-wrapper input[type=number] {
+            -moz-appearance: textfield;
+        } */
+
+        .number-input-wrapper button {
+            flex-shrink: 0;
+            width: 40px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 20px;
+            height: auto;
+            margin-top: 0;
+        }
+
+        .number-input-wrapper button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .number-input-wrapper .btn-minus {
+            border-right: 1px solid var(--border-color);
+        }
+
+        .number-input-wrapper .btn-plus {
+            border-left: 1px solid var(--border-color);
+        }
+
+        .grid-input-container {
+            display: grid;
+            grid-template-columns: auto 170px;
+            grid-gap: 15px 10px;
+            align-items: center;
+            margin-top: 25px;
+        }
+
+        .number-input-wrapper input[readonly] {
+            cursor: default;
+        }
+
+        /* --- KHỐI KẾT QUẢ --- */
+        .results {
+            min-width: 0;
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+
+        .results.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- BỐ CỤC 2 CỘT BÊN TRONG KHỐI KẾT QUẢ --- */
+        .result-columns-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .result-column {
+            width: 500px;
+            min-width: 0;
+        }
+
+        .section-title {
+            background-color: #2c3e50;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            /* margin-top: 10px; */
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .math-display {
+            background-color: #f6faff;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        .math-display:hover {
+            background-color: hsl(208, 100%, 94%);
+        }
+
+        .error {
+            color: var(--error-color);
+            font-weight: bold;
+            background-color: #fdd;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid var(--error-color);
+            font-size: 12px;
+        }
+
+        .success {
+            color: rgb(0, 145, 255);
+            font-weight: bold;
+            background-color: rgb(209, 234, 255);
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid rgb(0, 145, 255);
+            font-size: 12px;
+        }
+
+        .final-result {
+            color: black;
+            font-weight: bold;
+            font-size: 18px;
+            background-color: hsl(211, 100%, 94%);
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid rgb(0, 145, 255);
+            border-top: 4px solid rgb(0, 145, 255);
+
+        }
+
+
+        .final-result:active {
+            background-color: #0066ff;
+            color: white;
+        }
+
+        .iteration {
+            max-height: 500px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 12px;
+            background-color: #f6faff;
+        }
+
+        .iteration:hover {
+            background-color: hsl(208, 100%, 94%);
+        }
+
+
+        #iterations-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 1024px) {
+
+            .main-container,
+            .result-columns-wrapper {
+                flex-direction: column;
+            }
+
+            .input-section-wrapper {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .final-result {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="input-section-wrapper">
+            <h1>HPT - PP Gauss-Seidel</h1>
+            <div class="input-section">
+                <h2>Hệ 3 Phương trình:</h2>
+                <div class="equation-input">
+                    <div class="input-group">
+                        <label for="a1">\(a_1\)</label>
+                        <input type="number" id="a1" value="20">
+                    </div>
+                    <div class="input-group">
+                        <label for="b1">\(b_1\)</label>
+                        <input type="number" id="b1" value="-1">
+                    </div>
+                    <div class="input-group">
+                        <label for="c1">\(c_1\)</label>
+                        <input type="number" id="c1" value="2">
+                    </div>
+                    <div class="input-group">
+                        <label for="d1">\(d_1\)</label>
+                        <input type="number" id="d1" value="20">
+                    </div>
+                </div>
+
+                <div class="equation-input">
+                    <div class="input-group">
+                        <label for="a2">\(a_2\)</label>
+                        <input type="number" id="a2" value="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="b2">\(b_2\)</label>
+                        <input type="number" id="b2" value="10">
+                    </div>
+                    <div class="input-group">
+                        <label for="c2">\(c_2\)</label>
+                        <input type="number" id="c2" value="3">
+                    </div>
+                    <div class="input-group">
+                        <label for="d2">\(d_2\)</label>
+                        <input type="number" id="d2" value="10">
+                    </div>
+                </div>
+
+                <div class="equation-input">
+                    <div class="input-group">
+                        <label for="a3">\(a_3\)</label>
+                        <input type="number" id="a3" value="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="b3">\(b_3\)</label>
+                        <input type="number" id="b3" value="1">
+                    </div>
+                    <div class="input-group">
+                        <label for="c3">\(c_3\)</label>
+                        <input type="number" id="c3" value="-40">
+                    </div>
+                    <div class="input-group">
+                        <label for="d3">\(d_3\)</label>
+                        <input type="number" id="d3" value="80">
+                    </div>
+                </div>
+
+                <div class="grid-input-container">
+                    <label for="iterations">Số lần lặp:</label>
+                    <div class="number-input-wrapper">
+                        <button type="button" class="btn-minus" data-input-id="iterations">-</button>
+                        <input type="number" id="iterations" min="1" step="1" value="3">
+                        <button type="button" class="btn-plus" data-input-id="iterations">+</button>
+                    </div>
+                    <label for="floatpoint">Làm tròn số:</label>
+                    <div class="number-input-wrapper">
+                        <button type="button" class="btn-minus" data-input-id="floatpoint">-</button>
+                        <input type="number" id="floatpoint" min="1" max="34" step="1" value="6" readonly>
+                        <button type="button" class="btn-plus" data-input-id="floatpoint">+</button>
+                    </div>
+                </div>
+                <button onclick="solve()">Giải</button>
+            </div>
+            <button onclick="goToHomeWithTransition()" class="home-button">Trở về</button>
+        </div>
+        <div id="results" class="results" style="display: none;"></div>
+    </div>
+
+
+    <script>
+        function goToHomeWithTransition() {
+            document.body.classList.add('page-fade-out');
+            setTimeout(() => { window.location.href = '../index.html'; }, 300);
+        }
+
+        function froundf(value) {
+            const dcd = parseInt(document.getElementById('floatpoint').value) || 6;
+            const num = parseFloat(value);
+            if (isNaN(num)) return "0";
+            let str = num.toFixed(dcd);
+            str = str.replace(/\.?0+$/, '');
+            if (str.endsWith('.')) str = str.slice(0, -1);
+            return str === '' ? '0' : str;
+        }
+
+        function solve() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = ''; // Xóa kết quả cũ
+
+            try {
+                // --- LẤY DỮ LIỆU ---
+                const vals = ['a1', 'b1', 'c1', 'd1', 'a2', 'b2', 'c2', 'd2', 'a3', 'b3', 'c3', 'd3'].map(id => parseFloat(document.getElementById(id).value));
+                if (vals.some(isNaN)) throw new Error('Vui lòng nhập đầy đủ các hệ số.');
+                const [a1, b1, c1, d1, a2, b2, c2, d2, a3, b3, c3, d3] = vals;
+                const n = parseInt(document.getElementById('iterations').value) || 5;
+
+                // --- KIỂM TRA ĐIỀU KIỆN HỘI TỤ ---
+                if (Math.abs(a1) < Math.abs(b1) + Math.abs(c1) || Math.abs(b2) < Math.abs(a2) + Math.abs(c2) || Math.abs(c3) < Math.abs(a3) + Math.abs(b3)) {
+                    throw new Error("Ma trận không chéo trội hàng, phương pháp có thể không hội tụ.");
+                }
+
+                // --- KHỞI TẠO CẤU TRÚC HTML 2 CỘT ---
+                resultsDiv.innerHTML = `
+                    <h2>Kết quả tính toán</h2>
+                    <div class="result-columns-wrapper">
+                        <div id="result-col-1" class="result-column"></div>
+                        <div id="result-col-2" class="result-column"></div>
+                        
+                    </div>
+                    <div id="final-result-container"></div>
+                `;
+
+                // --- XÂY DỰNG NỘI DUNG CHO CỘT 1 ---
+                let htmlCol1 = '';
+                htmlCol1 += `<div class="section-title">Hệ phương trình</div>`;
+                htmlCol1 += `<div class="math-display">
+                    \\[ 
+                    \\begin{cases}
+                        ${a1}x ${b1 >= 0 ? '+' : ''}${b1}y ${c1 >= 0 ? '+' : ''}${c1}z = ${d1} \\\\[2ex]
+                        ${a2}x ${b2 >= 0 ? '+' : ''}${b2}y ${c2 >= 0 ? '+' : ''}${c2}z = ${d2} \\\\[2ex]
+                        ${a3}x ${b3 >= 0 ? '+' : ''}${b3}y ${c3 >= 0 ? '+' : ''}${c3}z = ${d3}
+                    \\end{cases}
+                    \\qquad \\to 
+                    \\begin{cases}
+                        x = \\dfrac{${d1}}{${a1}} ${a1 * b1 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(b1)}y}{${Math.abs(a1)}} ${a1 * c1 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(c1)}z}{${Math.abs(a1)}} \\\\[2ex]
+                        y = \\dfrac{${d2}}{${b2}} ${b2 * a2 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(a2)}x}{${Math.abs(b2)}} ${b2 * c2 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(c2)}z}{${Math.abs(b2)}} \\\\[2ex]
+                        z = \\dfrac{${d3}}{${c3}} ${c3 * a3 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(a3)}x}{${Math.abs(c3)}} ${c3 * b3 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(b3)}y}{${Math.abs(c3)}}
+                    \\end{cases}
+                    \\]
+                </div>`;
+
+                // htmlCol1 += `<div class="section-title">Biểu diễn nghiệm</div>`;
+                // htmlCol1 += `<div class="math-display">
+                //             \\[ 
+                //             \\begin{cases}
+                //             x = \\dfrac{${d1}}{${a1}} ${b1 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(b1)}y}{${a1}} ${c1 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(c1)}z}{${a1}} \\\\[2ex]
+                //             y = \\dfrac{${d2}}{${b2}} ${a2 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(a2)}x}{${b2}} ${c2 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(c2)}z}{${b2}} \\\\[2ex]
+                //             z = \\dfrac{${d3}}{${c3}} ${a3 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(a3)}x}{${c3}} ${b3 >= 0 ? '-' : '+'} \\dfrac{${Math.abs(b3)}y}{${c3}}
+                //             \\end{cases}
+                //             \\]
+                //         </div>`;
+                // Calculate B matrix and its norm
+                const B = [
+                    [0, -b1 / a1, -c1 / a1],
+                    [-a2 / b2, 0, -c2 / b2],
+                    [-a3 / c3, -b3 / c3, 0]
+                ];
+
+                const B_norm1 = Math.abs(B[0][1]) + Math.abs(B[0][2]);
+                const B_norm2 = Math.abs(B[1][0]) + Math.abs(B[1][2]);
+                const B_norm3 = Math.abs(B[2][0]) + Math.abs(B[2][1]);
+                const cvc_B = Math.max(B_norm1, B_norm2, B_norm3);
+                // htmlCol1 += `<div class="section-title">Ma trận B</div>`;
+                htmlCol1 += `<div class="math-display">
+                            \\[ B = \\begin{pmatrix}
+                                0 & ${froundf(B[0][1])} & ${froundf(B[0][2])} \\\\
+                                ${froundf(B[1][0])} & 0 & ${froundf(B[1][2])} \\\\
+                                ${froundf(B[2][0])} & ${froundf(B[2][1])} & 0
+                            \\end{pmatrix} 
+                            ;\\qquad \\|B\\|_\\infty = \\max\\{${froundf(B_norm1)}; ${froundf(B_norm2)}; ${froundf(B_norm3)}\\} = ${froundf(cvc_B)}\\]
+                        
+                        `;
+                // <div class="math-display">
+                //     \\[ \\|B\\|_\\infty = \\max\\{${froundf(B_norm1)}; ${froundf(B_norm2)}; ${froundf(B_norm3)}\\} = ${froundf(cvc_B)} \\]
+                // </div>
+                if (cvc_B >= 1) {
+                    htmlCol1 += `
+                            <div class="error">
+                                \\( \\to \\text{PP Gauss-Seidel có thể không hội tụ vì} ||B||_∞ \\) >= 1 
+                            </div>
+                        `;
+                } else {
+                    htmlCol1 += `
+                            <div class="success">
+                                \\(\\to \\text{PP Gauss-Seidel hội tụ vì } ||B||_∞ \\) < 1 
+                            </div>
+                        `;
+                }
+                htmlCol1 += `</div>`;
+                // Calculate U matrix and its norm
+                const U = [
+                    [0, -b1 / a1, -c1 / a1],
+                    [0, 0, -c2 / b2],
+                    [0, 0, 0]
+                ];
+
+                const U_norm1 = Math.abs(U[0][1]) + Math.abs(U[0][2]);
+                const U_norm2 = Math.abs(U[1][2]);
+                const cvc_U = Math.max(U_norm1, U_norm2, 0);
+
+                // htmlCol1 += `<div class="section-title">Ma trận U</div>`;
+                htmlCol1 += `
+                        <div class="math-display">
+                            \\[ U = \\begin{pmatrix}
+                                0 & ${froundf(U[0][1])} & ${froundf(U[0][2])} \\\\
+                                0 & 0 & ${froundf(U[1][2])} \\\\
+                                0 & 0 & 0
+                            \\end{pmatrix} 
+                            ;\\qquad \\|U\\|_\\infty = \\max\\{${froundf(U_norm1)}; ${froundf(U_norm2)}; 0\\} = ${froundf(cvc_U)}
+                            \\]
+                        </div>
+                        
+                    `;
+                // <div class="math-display">
+                //     \\[ \\|U\\|_\\infty = \\max\\{${froundf(U_norm1)}; ${froundf(U_norm2)}; 0\\} = ${froundf(cvc_U)} \\]
+                // </div>
+                document.getElementById('result-col-1').innerHTML = htmlCol1;
+                let htmlCol2 = '';
+
+
+
+                let iterationsHTML = '';
+                // Perform iterations
+                const C = new Array(n);
+                for (let i = 0; i < n; i++) {
+                    C[i] = [0, 0, 0];
+                }
+
+                // Initial iteration
+                let x_val = 0, y_val = 0, z_val = 0;
+
+                x_val = (d1 - b1 * y_val - c1 * z_val) / a1;
+                C[0][0] = x_val;
+
+                y_val = (d2 - a2 * x_val - c2 * z_val) / b2;
+                C[0][1] = y_val;
+
+                z_val = (d3 - a3 * x_val - b3 * y_val) / c3;
+                C[0][2] = z_val;
+
+                // Subsequent iterations
+                for (let i = 1; i < n; i++) {
+                    x_val = (d1 - b1 * C[i - 1][1] - c1 * C[i - 1][2]) / a1;
+                    C[i][0] = x_val;
+
+                    y_val = (d2 - a2 * C[i][0] - c2 * C[i - 1][2]) / b2;
+                    C[i][1] = y_val;
+
+                    z_val = (d3 - a3 * C[i][0] - b3 * C[i][1]) / c3;
+                    C[i][2] = z_val;
+                }
+
+                // Display iterations in matrix format
+                iterationsHTML += `<div class="section-title"> Xây dựng dãy \\( \\{ {x^n} \\} \\text{ với } X^{(0)}  = \\begin{pmatrix} 0 \\\\ 0 \\\\ 0 \\end{pmatrix} \\)</div>`;
+                iterationsHTML += `<div math-display">\\( x^{\(n+1\)} = \(x^{\(n+1\)}y^{\(n+1\)}z^{\(n+1\)})^T \\) </div>`;
+
+                iterationsHTML += `
+                        <div class="iteration">
+                    `;
+                iterationsHTML += `\\[`;
+                for (let i = 0; i < n; i++) {
+                    iterationsHTML += `
+                        X^{(${i + 1})} = \\begin{pmatrix} ${froundf(C[i][0])} \\\\ ${froundf(C[i][1])} \\\\ ${froundf(C[i][2])} \\end{pmatrix};\\quad
+                    `;
+                    // <div class="math-display" style="margin: 10px 0;">
+                    //     \\[ X^{(${i + 1})} = \\begin{pmatrix} ${froundf(C[i][0])} \\\\ ${froundf(C[i][1])} \\\\ ${froundf(C[i][2])} \\end{pmatrix} \\]
+                    // </div>
+                }
+                iterationsHTML += `\\]`;
+                iterationsHTML += `</div>`;
+                htmlCol2 += iterationsHTML;
+
+                // Error estimation
+                if (n >= 2 && cvc_B < 1) {
+                    const dx = C[n - 1][0] - C[n - 2][0];
+                    const dy = C[n - 1][1] - C[n - 2][1];
+                    const dz = C[n - 1][2] - C[n - 2][2];
+                    const max_diff = Math.max(Math.abs(dx), Math.abs(dy), Math.abs(dz));
+                    const error_bound = (cvc_U / (1 - cvc_B)) * max_diff;
+
+                    htmlCol2 += `<div class="section-title">Đánh giá sai số</div>`;
+                    htmlCol2 += `
+                            <div class="math-display">
+                                \\[ ||X^{(${n})} - X^{(*)}||_\\infty \\leq \\frac{\\|U\\|_\\infty}{1 - \\|B\\|_\\infty}  ||X^{(${n})} - X^{(${n - 1})}||_\\infty \\]
+                                \\[ \\leq \\frac{${froundf(cvc_U)}}{1 - ${froundf(cvc_B)}} \\left\\| \\begin{pmatrix}${froundf(dx)} \\\\ ${froundf(dy)} \\\\ ${froundf(dz)} \\end{pmatrix}\\right\\| _\\infty \\]
+                                \\[ \\leq ${froundf(error_bound)} \\]
+                            </div>
+                        `;
+                }
+                document.getElementById('result-col-2').innerHTML = htmlCol2;
+
+                // --- XÂY DỰNG NỘI DUNG CHO CỘT 2 ---
+                // let htmlCol3 = '';
+
+
+
+                // htmlCol3 += `<div class="section-title">Nghiệm của hệ phương trình</div>`;
+                // htmlCol3 += `<div class="math-display success" style="text-align:center; font-size: 1.2em; color: black;">
+                //     \\[ 
+                //         \\boxed{ 
+                //             \\begin{gathered} x \\approx ${froundf(C[n - 1][0])} \\\\ 
+                //                                 y \\approx ${froundf(C[n - 1][1])} \\\\ 
+                //                                 z \\approx ${froundf(C[n - 1][2])} 
+                //             \\end{gathered} } \\]</div>
+                //     </div>`;
+
+
+                // document.getElementById('result-col-3').innerHTML = htmlCol3;
+
+                // --- HIỂN THỊ KẾT QUẢ CUỐI CÙNG ---
+                let finalResultHTML = '';
+                finalResultHTML += `
+                    <div class="math-display final-result">Kết luận:
+                        \\( x \\approx ${froundf(C[n - 1][0])}, \\quad y \\approx ${froundf(C[n - 1][1])}, \\quad z \\approx ${froundf(C[n - 1][2])} \\)
+                    </div>`;
+                document.getElementById('final-result-container').innerHTML = finalResultHTML;
+
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">${error.message}</div>`;
+            }
+
+            resultsDiv.style.display = 'block';
+            resultsDiv.classList.remove('visible');
+            setTimeout(() => {
+                resultsDiv.classList.add('visible');
+                if (window.innerWidth > 1024) {
+                    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 10);
+
+            if (typeof MathJax !== 'undefined') MathJax.typesetPromise();
+        }
+
+        // --- BỘ ĐIỀU KHIỂN SỐ ---
+        document.addEventListener('DOMContentLoaded', () => {
+            function setupCustomNumberInput(inputId, step, min, max) {
+                const input = document.getElementById(inputId);
+                const minusBtn = document.querySelector(`.btn-minus[data-input-id="${inputId}"]`);
+                const plusBtn = document.querySelector(`.btn-plus[data-input-id="${inputId}"]`);
+                let intervalId, timeoutId;
+
+                const changeValue = (amount) => {
+                    let val = parseInt(input.value) || 0;
+                    val += amount;
+                    if (val < min) val = min;
+                    if (max !== undefined && val > max) val = max;
+                    input.value = val;
+                };
+
+                const startChanging = (amount) => {
+                    changeValue(amount);
+                    timeoutId = setTimeout(() => {
+                        intervalId = setInterval(() => { changeValue(amount); }, 30);
+                    }, 500);
+                };
+
+                const stopChanging = () => {
+                    clearTimeout(timeoutId);
+                    clearInterval(intervalId);
+                };
+
+                minusBtn.addEventListener('mousedown', () => startChanging(-step));
+                plusBtn.addEventListener('mousedown', () => startChanging(step));
+                document.addEventListener('mouseup', stopChanging);
+                [minusBtn, plusBtn].forEach(btn => btn.addEventListener('mouseleave', stopChanging));
+            }
+
+            setupCustomNumberInput('iterations', 1, 1);
+            setupCustomNumberInput('floatpoint', 1, 1, 34);
+
+            const iterationsInput = document.getElementById('iterations');
+            iterationsInput.addEventListener('blur', () => {
+                if (iterationsInput.value.trim() === '') iterationsInput.value = 5;
+            });
+        });
+    </script>
+</body>
+
+</html>

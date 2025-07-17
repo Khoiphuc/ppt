@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phương Pháp Runge-Kutta</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.7.0/math.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --background-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #ddd;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            color: var(--text-color);
+            opacity: 1;
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+
+        body.page-fade-out {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .input-section-wrapper {
+            width: 380px;
+            flex-shrink: 0;
+        }
+
+        .input-section {
+            background-color: rgb(240, 245, 255);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        /* THÊM MỚI: Style cho ô chỉ đọc */
+        input[readonly] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+            color: #555;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        button {
+            background: linear-gradient(to right, #0D47A1, #0288D1, #4FC3F7);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-weight: 500;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .home-button {
+            background: linear-gradient(135deg, #00B4DB, #0083B0, #00FF7F);
+        }
+
+        .grid-input-container {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-gap: 15px 10px;
+            align-items: center;
+        }
+
+        .number-input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: white;
+        }
+
+        .number-input-wrapper input {
+            text-align: center;
+            border: none;
+            padding: 12px 5px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .number-input-wrapper input[readonly] {
+            background-color: white;
+            /* Ghi đè style readonly chung */
+            cursor: default;
+        }
+
+        .number-input-wrapper button {
+            flex-shrink: 0;
+            width: 40px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            height: 100%;
+            transition: background-color 0.2s, color 0.2s;
+            user-select: none;
+            margin: 0;
+        }
+
+        .number-input-wrapper button:hover {
+            background-color: #f0f0f0;
+            color: var(--secondary-color);
+        }
+
+        .number-input-wrapper .btn-minus {
+            border-right: 1px solid var(--border-color);
+            border-radius: 5px 0 0 5px;
+        }
+
+        .number-input-wrapper .btn-plus {
+            border-left: 1px solid var(--border-color);
+            border-radius: 0 5px 5px 0;
+        }
+
+        .math-input-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .math-input-row span {
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+
+        .math-input-row input {
+            width: 90px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .input-group-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group-inline>label {
+            margin-bottom: 0;
+        }
+
+        .input-group-inline>input {
+            width: 120px;
+        }
+
+
+        .result-section {
+            flex: 1;
+            min-width: 0;
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .result-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-title {
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+            margin-top: 0;
+        }
+
+        .result-row {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+        }
+
+        .result-column {
+            flex-shrink: 0;
+            width: 500px;
+        }
+
+        .math-formula,
+        .calculation-box {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            border-left: 4px solid var(--primary-color);
+            font-size: 14px;
+        }
+
+        .math-formula:hover,
+        .calculation-box:hover {
+            background-color: #edf9ff;
+        }
+
+
+        .calculation-box h4 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .calculation-step {
+            margin-bottom: 10px;
+        }
+
+        .final-result {
+            border-left: 4px solid rgb(0, 149, 255);
+            background-color: #e8f3f8;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .final-result:hover {
+            background-color: #cde4ff;
+        }
+
+        .error {
+            color: var(--error-color);
+            background-color: #fde8e8;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        small {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 1024px) {
+
+            .main-container,
+            .result-row {
+                flex-direction: column;
+            }
+
+            .input-section-wrapper,
+            .result-column {
+                width: 100%;
+            }
+
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="input-section-wrapper">
+            <h1>PP Runge-Kutta</h1>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="function">Phương trình vi phân \( y' = f(x, y) \):</label>
+                    <input type="text" id="function" value="2x + 3y">
+                    <small>Sử dụng cú pháp toán học của JS.</small>
+                </div>
+
+                <div class="input-group">
+                    <label>Điều kiện ban đầu:</label>
+                    <div class="math-input-row">
+                        <span>\(y(\)</span>
+                        <input type="number" id="x0" step="any" value="0">
+                        <span>\() = \)</span>
+                        <input type="number" id="y0" step="any" value="1">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Tính giá trị tại :</label>
+                    <div class="math-input-row" style="gap: 15px;">
+                        <div class="math-input-row">
+                            <span>\(x_1 = \)</span>
+                            <input type="number" id="x1" step="any" readonly>
+                        </div>
+                        <div class="math-input-row">
+                            <span>\(x_2 = \)</span>
+                            <input type="number" id="x2" step="any" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group input-group-inline">
+                    <label for="h">Bước nhảy \( h \):</label>
+                    <input type="number" id="h" step="any" value="0.01">
+                </div>
+
+                <div class="input-group grid-input-container">
+                    <label for="floatpoint">Làm tròn:</label>
+                    <div class="number-input-wrapper">
+                        <button type="button" class="btn-minus" data-input-id="floatpoint">-</button>
+                        <input type="number" id="floatpoint" min="1" max="15" step="1" value="6" readonly>
+                        <button type="button" class="btn-plus" data-input-id="floatpoint">+</button>
+                    </div>
+                </div>
+
+            </div>
+            <button onclick="calculate()">Tính toán</button>
+            <button onclick="goToHomeWithTransition()" class="home-button">Trở về</button>
+        </div>
+        <div id="result" class="result-section" style="display: none;"></div>
+    </div>
+
+    <script>
+        function goToHomeWithTransition() {
+            document.body.classList.add('page-fade-out');
+            setTimeout(() => { window.location.href = '../index.html'; }, 300);
+        }
+
+        function froundf(value) {
+            const decimalPlaces = parseInt(document.getElementById('floatpoint').value);
+            const num = parseFloat(value);
+            if (isNaN(num)) return "NaN";
+            return Number(num.toFixed(decimalPlaces));
+        }
+
+        function formatNumber(num) {
+            let str = String(num);
+            if (str.includes('e')) return str;
+            if (str.includes('.')) str = str.replace(/\.?0+$/, '');
+            return str === '' ? '0' : str;
+        }
+
+        function calcF(xVal, yVal, fInputExpression) {
+            try {
+                if (typeof fInputExpression !== 'string' || fInputExpression.trim() === '') {
+                    throw new Error("Biểu thức hàm rỗng hoặc không hợp lệ.");
+                }
+                const scope = { x: xVal, y: yVal, e: Math.E };
+                return math.evaluate(fInputExpression, scope);
+            } catch (e) {
+                throw new Error(`Lỗi tính toán hàm f(${formatNumber(xVal)}, ${formatNumber(yVal)}): ${e.message}`);
+            }
+        }
+
+        function calculate() {
+            const resultSection = document.getElementById('result');
+            resultSection.style.display = 'block';
+            resultSection.classList.remove('visible');
+
+            setTimeout(() => {
+                resultSection.classList.add('visible');
+                resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 10);
+
+            try {
+                const fInputOriginal = document.getElementById('function').value;
+                const x0 = parseFloat(document.getElementById('x0').value);
+                const y0 = parseFloat(document.getElementById('y0').value);
+                const h = parseFloat(document.getElementById('h').value);
+
+                if ([x0, y0, h].some(isNaN) || h === 0) {
+                    throw new Error("Vui lòng kiểm tra lại các giá trị số đã nhập. h phải khác 0.");
+                }
+
+                let fDisplay = math.parse(fInputOriginal).toTex({ parenthesis: 'auto' });
+
+                // Tính toán y1
+                const A1 = h * calcF(x0, y0, fInputOriginal);
+                const B1 = h * calcF(x0 + h / 2, y0 + A1 / 2, fInputOriginal);
+                const C1 = h * calcF(x0 + h / 2, y0 + B1 / 2, fInputOriginal);
+                const D1 = h * calcF(x0 + h, y0 + C1, fInputOriginal);
+                const y1_calculated = y0 + (1 / 6) * (A1 + 2 * B1 + 2 * C1 + D1);
+
+                // Tính toán y2
+                const x_for_y2 = x0 + h;
+                const y_for_y2 = y1_calculated;
+                const A2 = h * calcF(x_for_y2, y_for_y2, fInputOriginal);
+                const B2 = h * calcF(x_for_y2 + h / 2, y_for_y2 + A2 / 2, fInputOriginal);
+                const C2 = h * calcF(x_for_y2 + h / 2, y_for_y2 + B2 / 2, fInputOriginal);
+                const D2 = h * calcF(x_for_y2 + h, y_for_y2 + C2, fInputOriginal);
+                const y2_calculated = y_for_y2 + (1 / 6) * (A2 + 2 * B2 + 2 * C2 + D2);
+
+                const x_final_y1 = x0 + h;
+                const x_final_y2 = x0 + 2 * h;
+
+                renderResults({
+                    fDisplay, x0, x_for_y2, y0, h, x_final_y1, x_final_y2,
+                    A1, B1, C1, D1, y1_calculated,
+                    A2, B2, C2, D2, y2_calculated
+                });
+
+            } catch (e) {
+                resultSection.innerHTML = `<div class="error"><h3>Lỗi:</h3><p>${e.message}</p></div>`;
+            }
+
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([resultSection]).catch(err => console.error(err));
+            }
+        }
+
+        function renderResults(data) {
+            const { fDisplay, x0, y0, x_for_y2, h, x_final_y1, x_final_y2, A1, B1, C1, D1, y1_calculated, A2, B2, C2, D2, y2_calculated } = data;
+
+            const resultSection = document.getElementById('result');
+
+            resultSection.innerHTML = `
+                <h2 class="result-title">Kết quả tính toán</h2>
+                <div class="math-formula">
+                    <p>\\( y' = ${fDisplay}; x_0 = ${formatNumber(x0)}; y_0 = ${formatNumber(y0)}; x_1 = ${formatNumber(x_for_y2)}; h = ${formatNumber(h)}\\)</p>
+                </div>
+                <div class="result-row">
+                    <div class="result-column" id="y1-column">
+                        <h3>Tính \\(y_1\\)</h3>
+                        <div class="calculation-box">
+                             \\[ \\begin{align*}
+                                A &= hf(x_0, y_0) = ${formatNumber(froundf(A1))} \\\\[2ex]
+                                B &= hf(x_0+\\tfrac{h}{2}, y_0+\\tfrac{A}{2}) = ${formatNumber(froundf(B1))} \\\\[2ex]
+                                C &= hf(x_0+\\tfrac{h}{2}, y_0+\\tfrac{B}{2}) = ${formatNumber(froundf(C1))} \\\\[2ex]
+                                D &= hf(x_0+h, y_0+C) = ${formatNumber(froundf(D1))}
+                            \\end{align*} \\]
+                            \\[ y_1 = y_0 + \\frac{1}{6}(A + 2B + 2C + D) \\approx ${formatNumber(froundf(y1_calculated))} \\]
+                        </div>
+                    </div>
+                    <div class="result-column" id="y2-column">
+                        <h3>Tính \\(y_2\\)</h3>
+                        <div class="calculation-box">
+                             \\[ \\begin{align*}
+                                A &= hf(x_1, y_1) = ${formatNumber(froundf(A2))} \\\\[2ex]
+                                B &= hf(x_1+\\tfrac{h}{2}, y_1+\\tfrac{A}{2}) = ${formatNumber(froundf(B2))} \\\\[2ex]
+                                C &= hf(x_1+\\tfrac{h}{2}, y_1+\\tfrac{B}{2}) = ${formatNumber(froundf(C2))} \\\\[2ex]
+                                D &= hf(x_1+h, y_1+C) = ${formatNumber(froundf(D2))}
+                             \\end{align*} \\]
+                             \\[  y_2 = y_1 + \\frac{1}{6}(A + 2B + 2C + D) \\approx ${formatNumber(froundf(y2_calculated))} \\]
+                        </div>
+                    </div>
+                </div>
+                <div class="final-result">
+                     <p>Vậy: \\(  y(${formatNumber(x_final_y1)}) \\approx ${formatNumber(froundf(y1_calculated))};\\quad  y(${formatNumber(x_final_y2)}) \\approx ${formatNumber(froundf(y2_calculated))}  \\)</p>
+
+                </div>
+            `;
+        }
+
+        // THAY ĐỔI: Chuyển toàn bộ logic vào đây
+        document.addEventListener('DOMContentLoaded', () => {
+            // Logic cho nút +/-
+            function setupCustomNumberInput(inputId, step, min, max) {
+                const input = document.getElementById(inputId);
+                if (!input) return;
+                const minusBtn = document.querySelector(`.btn-minus[data-input-id="${inputId}"]`);
+                const plusBtn = document.querySelector(`.btn-plus[data-input-id="${inputId}"]`);
+                let intervalId = null, timeoutId = null;
+
+                const changeValue = (amount) => {
+                    let currentValue = parseInt(input.value) || 0;
+                    let newValue = currentValue + amount;
+                    if (min !== undefined && newValue < min) newValue = min;
+                    if (max !== undefined && newValue > max) newValue = max;
+                    input.value = newValue;
+                };
+
+                const startChanging = (amount) => {
+                    changeValue(amount);
+                    timeoutId = setTimeout(() => {
+                        intervalId = setInterval(() => { changeValue(amount); }, 50);
+                    }, 400);
+                };
+
+                const stopChanging = () => {
+                    clearTimeout(timeoutId);
+                    clearInterval(intervalId);
+                };
+
+                const addListener = (btn, amount) => {
+                    btn.addEventListener('mousedown', (e) => { e.preventDefault(); startChanging(amount); });
+                    btn.addEventListener('mouseleave', stopChanging);
+                };
+
+                addListener(minusBtn, -step);
+                addListener(plusBtn, step);
+                document.addEventListener('mouseup', stopChanging);
+            }
+            setupCustomNumberInput('floatpoint', 1, 1, 15);
+
+            // THÊM MỚI: Logic tự động cập nhật x1, x2
+            const x0_input = document.getElementById('x0');
+            const h_input = document.getElementById('h');
+            const x1_input = document.getElementById('x1');
+            const x2_input = document.getElementById('x2');
+
+            function updateXValues() {
+                const x0 = parseFloat(x0_input.value);
+                const h = parseFloat(h_input.value);
+
+                if (!isNaN(x0) && !isNaN(h)) {
+                    // Dùng toPrecision để tránh lỗi làm tròn của số thực
+                    const new_x1 = parseFloat((x0 + h).toPrecision(15));
+                    const new_x2 = parseFloat((new_x1 + h).toPrecision(15));
+
+                    x1_input.value = new_x1;
+                    x2_input.value = new_x2;
+                } else {
+                    x1_input.value = '';
+                    x2_input.value = '';
+                }
+            }
+
+            // Gắn sự kiện 'input' để cập nhật ngay lập tức
+            x0_input.addEventListener('input', updateXValues);
+            h_input.addEventListener('input', updateXValues);
+
+            // Gọi hàm một lần khi tải trang để tính giá trị ban đầu
+            updateXValues();
+        });
+    </script>
+</body>
+
+</html>

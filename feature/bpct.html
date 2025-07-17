@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bình phương Cực Tiểu</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.7.0/math.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --background-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #ddd;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+        }
+
+        /* --- CÀI ĐẶT CHUNG --- */
+        body {
+            background: rgb(255, 255, 255);
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        h2,
+        h3 {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        /* --- BỐ CỤC CHÍNH --- */
+        .main-container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .input-column {
+            flex-shrink: 0;
+        }
+
+        .result-column {
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .input-section {
+            width: 330px;
+            background-color: rgb(240, 245, 255);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        button {
+            background: linear-gradient(to right, #0D47A1, #0288D1, #4FC3F7);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            width: 100%;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        /* --- BỘ ĐIỀU KHIỂN SỐ --- */
+        .number-input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: white;
+            padding: 0;
+        }
+
+        .number-input-wrapper input {
+            flex: 1;
+            min-width: 50px;
+            text-align: center;
+            border: none;
+            padding: 12px 5px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .number-input-wrapper input::-webkit-outer-spin-button,
+        .number-input-wrapper input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* .number-input-wrapper input[type=number] {
+            -moz-appearance: textfield;
+        } */
+
+        .number-input-wrapper button {
+            flex-shrink: 0;
+            width: 40px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 20px;
+            height: auto;
+            margin-top: 0;
+        }
+
+        .number-input-wrapper button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .number-input-wrapper .btn-minus {
+            border-right: 1px solid var(--border-color);
+        }
+
+        .number-input-wrapper .btn-plus {
+            border-left: 1px solid var(--border-color);
+        }
+
+        .number-input-wrapper input[readonly] {
+            cursor: default;
+            background-color: white;
+        }
+
+        .input-group.horizontal {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group.horizontal label {
+            margin-bottom: 0;
+            min-width: 100px;
+        }
+
+        .input-group.horizontal .number-input-wrapper {
+            flex-grow: 1;
+            /* có thể thay bằng số cho ô tăng giảm là width */
+        }
+
+        /* --- KHỐI NHẬP ĐIỂM DỮ LIỆU --- */
+        #data-points-container .data-point-row {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        #data-points-container .data-point-row label {
+            min-width: 50px;
+            font-weight: bold;
+            margin-right: 10px;
+            margin-bottom: 0;
+        }
+
+        #data-points-container .data-point-row input {
+            width: 80px;
+            margin-right: 10px;
+            padding: 8px;
+            flex-shrink: 0;
+        }
+
+        /* --- KHỐI KẾT QUẢ --- */
+        .result-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .result-title {
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+            margin-top: 0;
+        }
+
+
+        /* --- CSS MỚI CHO HIỆU ỨNG KHỐI CON --- */
+        .result-block {
+            /* Trạng thái ban đầu: trong suốt và bị đẩy xuống dưới */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .result-block.visible {
+            /* Trạng thái cuối cùng: rõ ràng và ở đúng vị trí */
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 10px 15px;
+            text-align: center;
+            border: 1px solid #eee;
+            min-width: 50px;
+            overflow-x: auto;
+        }
+
+        .math-formula {
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            overflow-x: auto;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary-color);
+            font-size: 14px;
+        }
+
+        .math-formula:hover {
+            background-color: #e6f6ff;
+        }
+
+        .final-result {
+            background-color: rgb(213, 233, 255);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            overflow-x: auto;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary-color);
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .final-result:active {
+            background-color: #006fcf;
+            color: white;
+        }
+
+        .error {
+            color: var(--error-color);
+            background-color: #fde8e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid var(--error-color);
+
+        }
+
+        .home-button {
+            margin-top: 15px;
+            background: linear-gradient(135deg, #00B4DB, #0083B0, #00FF7F);
+        }
+
+        /* --- BỐ CỤC CHO MÀN HÌNH NHỎ --- */
+        @media (max-width: 1024px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .input-column {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                width: 900px;
+            }
+
+            .input-section {
+                width: 800px;
+            }
+
+            .input-group.horizontal .number-input-wrapper {
+                flex-grow: 0;
+                width: 180px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+        <div class="input-column">
+            <h1>PP - BPCT</h1>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="f_a">Biểu thức của hệ số a:</label>
+                    <input type="text" id="f_a" placeholder="x" value="3^x + x">
+                </div>
+                <div class="input-group">
+                    <label for="f_b">Biểu thức của hệ số b:</label>
+                    <input type="text" id="f_b" placeholder="1" value="x^3 + 1">
+                </div>
+                <div class="input-group">
+                    <label for="f_free">Biểu thức tự do:</label>
+                    <input type="text" id="f_free" placeholder="0" value="2">
+                </div>
+                <small style="color: #7f8c8d; font-size: 0.9em;">Dùng cú pháp: log, sin, cos, exp, sqrt, ^</small>
+
+                <div class="input-group horizontal" style="margin-top: 15px;">
+                    <label for="n">Số điểm:</label>
+                    <div class="number-input-wrapper">
+                        <button type="button" class="btn-minus" data-input-id="n">-</button>
+                        <input type="number" id="n" min="2" step="1" value="3" readonly>
+                        <button type="button" class="btn-plus" data-input-id="n">+</button>
+                    </div>
+                </div>
+
+                <div id="data-points-container"></div>
+
+                <div class="input-group horizontal">
+                    <label for="floatpoint">Làm tròn số:</label>
+                    <div class="number-input-wrapper">
+                        <button type="button" class="btn-minus" data-input-id="floatpoint">-</button>
+                        <input type="number" id="floatpoint" min="1" max="15" step="1" value="6" readonly>
+                        <button type="button" class="btn-plus" data-input-id="floatpoint">+</button>
+                    </div>
+                </div>
+                <button onclick="calculateLeastSquares()">Tính toán</button>
+            </div>
+            <button onclick="goToHomeWithTransition()" class="home-button">Trở về</button>
+        </div>
+
+        <div id="result" class="result-section result-column">
+        </div>
+
+    </div>
+
+    <script>
+        function goToHomeWithTransition() {
+            document.body.classList.add('page-fade-out');
+            setTimeout(function () {
+                window.location.href = '../index.html';
+            }, 300);
+        }
+        let dataPoints = [];
+
+        document.getElementById('n').addEventListener('change', function () {
+            const n = parseInt(this.value);
+            // Không cần kiểm tra n < 2 nữa vì bộ điều khiển số đã xử lý
+            const container = document.getElementById('data-points-container');
+            container.innerHTML = '';
+            let temp_x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+            let temp_y = [3.33, 5.33, 14.67, 1, 2, 3, 4, 5, 6, 1, 1, 2, 3, 4, 3, 2];
+            const xRow = document.createElement('div');
+            xRow.className = 'data-point-row';
+            let xInputsHTML = '<label> x</label>';
+            for (let i = 0; i < n; i++) {
+                const x_val = (i < temp_x.length) ? temp_x[i] : '';
+                xInputsHTML += `<input type="number" id="x_${i}" step="any" placeholder="x${i + 1}" value="${x_val}">`;
+            }
+            xRow.innerHTML = xInputsHTML;
+            container.appendChild(xRow);
+            const yRow = document.createElement('div');
+            yRow.className = 'data-point-row';
+            let yInputsHTML = '<label>y</label>';
+            for (let i = 0; i < n; i++) {
+                const y_val = (i < temp_y.length) ? temp_y[i] : '';
+                yInputsHTML += `<input type="number" id="y_${i}" step="any" placeholder="y${i + 1}" value="${y_val}">`;
+            }
+            yRow.innerHTML = yInputsHTML;
+            container.appendChild(yRow);
+        });
+
+        document.getElementById('n').dispatchEvent(new Event('change'));
+
+        function formatNumber(num) {
+            const dcd = parseInt(document.getElementById('floatpoint').value);
+            if (num === null || num === undefined || isNaN(num)) return "NaN";
+            let str = num.toFixed(dcd);
+            if (str.includes('.')) {
+                str = str.replace(/\.?0+$/, '');
+            }
+            if (str.endsWith('.')) {
+                str = str.slice(0, -1);
+            }
+            return str === '' ? '0' : str;
+        }
+
+        function format_k(expr) {
+            try {
+                const node = math.parse(expr);
+                return node.toTex({ parenthesis: 'auto' }).replace(/x/g, 'x_{k}').replace(/y/g, 'y_{k}');
+            } catch (e) {
+                return expr.replace(/\bx\b/g, 'x_{k}').replace(/\by\b/g, 'y_{k}');
+            }
+        }
+
+        function groupExpressionIfNeeded(exprStr) {
+            if (!exprStr || typeof exprStr !== 'string') return exprStr;
+            const trimmedExpr = exprStr.trim();
+            if (trimmedExpr === '') return '';
+            try {
+                const node = math.parse(trimmedExpr);
+                if (node.isParenthesisNode) return trimmedExpr;
+                if (node.isOperatorNode && (node.op === '+' || node.op === '-') && node.args && node.args.length === 2) {
+                    return `(${trimmedExpr})`;
+                }
+                return trimmedExpr;
+            } catch (e) {
+                return exprStr;
+            }
+        }
+
+        function formatExpression(expr) {
+            try {
+                const node = math.parse(expr);
+                return node.toTex({ parenthesis: 'auto' });
+            } catch (e) {
+                return expr;
+            }
+        }
+
+        function calculateLeastSquares() {
+            const resultSection = document.getElementById('result');
+            resultSection.innerHTML = ''; // Xóa nội dung cũ để tránh hiển thị lỗi cũ
+            resultSection.classList.remove('show');
+
+            requestAnimationFrame(() => {
+                try {
+                    const f_a = document.getElementById('f_a').value || '0';
+                    const f_b = document.getElementById('f_b').value || '0';
+                    const f_free = document.getElementById('f_free').value || '0';
+                    const n = parseInt(document.getElementById('n').value);
+
+                    dataPoints = [];
+                    for (let i = 0; i < n; i++) {
+                        const x = parseFloat(document.getElementById(`x_${i}`).value);
+                        const y = parseFloat(document.getElementById(`y_${i}`).value);
+                        if (isNaN(x) || isNaN(y)) {
+                            throw new Error(`Vui lòng nhập số hợp lệ cho điểm dữ liệu ${i + 1}`);
+                        }
+                        dataPoints.push({ x, y });
+                    }
+
+                    // Tạo lại cấu trúc HTML cho kết quả
+                    resultSection.innerHTML = `
+                        <h2 class="result-title">Kết quả</h2>
+                        <div class="math-formula result-block" style="display: flex; align-items: center;padding: 0; margin: 0;">
+                            <div id="function-display" style="flex: 1; padding: 15px 0;"></div>
+                            <div id="data-points-display" style="flex: 1;"></div>
+                        </div>
+                        <div id="sum-squares" class="math-formula result-block"></div>
+                        <div id="sum-formulas" class="math-formula result-block"></div>
+                        <div id="normal-equations" class="math-formula result-block"></div>
+                        <div id="final-result" class="final-result result-block"></div>
+                    `;
+
+                    document.getElementById('function-display').innerHTML = `
+                        <p>\\[ y = ${formatExpression(`a${groupExpressionIfNeeded(f_a)} + b${groupExpressionIfNeeded(f_b)} ${f_free ? ' + ' + f_free : ''}`)} \\]</p>`;
+
+                    document.getElementById('data-points-display').innerHTML = `
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td style="font-weight: bold; text-align: right; padding-right: 15px;">\\(x_k\\)</td>${dataPoints.map(point => `<td>\\(${point.x}\\)</td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td style="font-weight: bold; text-align: right; padding-right: 15px;">\\(y_k\\)</td>${dataPoints.map(point => `<td>\\(${point.y}\\)</td>`).join('')}
+                                </tr>
+                            </tbody>
+                        </table>`;
+
+                    document.getElementById('sum-squares').innerHTML = `
+                        <p>\\[ 
+                            S = \\sum_{k=1}^{${n}} ${formatExpression(format_k(`(a${groupExpressionIfNeeded(f_a)} + b${groupExpressionIfNeeded(f_b)} ${f_free ? ' + ' + f_free : ''} - y)^2 `))} 
+                            \\quad 
+                            \\to 
+                            \\quad 
+                            \\begin{cases} 
+                                S'_{a} = 2 \\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(`(a${groupExpressionIfNeeded(f_a)} + b${groupExpressionIfNeeded(f_b)} ${f_free ? ' + ' + f_free : ''} - y) ${groupExpressionIfNeeded(f_a)}`))} = 0 \\\\[2ex] 
+                                S'_{b} = 2 \\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(`(a${groupExpressionIfNeeded(f_a)} + b${groupExpressionIfNeeded(f_b)} ${f_free ? ' + ' + f_free : ''} - y) ${groupExpressionIfNeeded(f_b)}`))} = 0 
+                            \\end{cases} 
+                        \\]</p>`;
+
+                    const he_pt1 = [`(${f_a})*(${f_a})`, `(${f_a})*(${f_b})`, `(${f_a})*(${f_free})`, `(${f_a})*y`];
+                    const he_pt2 = [`(${f_b})*(${f_a})`, `(${f_b})*(${f_b})`, `(${f_b})*(${f_free})`, `(${f_b})*y`];
+
+                    document.getElementById('sum-formulas').innerHTML = `
+                        <p>\\[ 
+                            \\begin{cases} 
+                                \\left( \\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt1[0]))}\\right)a + \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt1[1]))}\\right)b + \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt1[2]))}\\right) - \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt1[3]))} \\right) = 0 \\\\[1.1ex] 
+                                \\left( \\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt2[0]))}\\right)a + \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt2[1]))}\\right)b + \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt2[2]))}\\right) - \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt2[3]))} \\right) = 0 \\end{cases} 
+                        \\]</p>`;
+
+                    const sums1 = [0, 0, 0, 0];
+                    const sums2 = [0, 0, 0, 0];
+
+                    dataPoints.forEach(point => {
+                        const scope = { x: point.x, y: point.y };
+                        for (let i = 0; i < 4; i++) {
+                            sums1[i] += math.evaluate(he_pt1[i], scope);
+                            sums2[i] += math.evaluate(he_pt2[i], scope);
+                        }
+                    });
+
+                    function formatFirstCoefficient(value) { return (value >= 0) ? `${formatNumber(value)}` : `- ${formatNumber(Math.abs(value))}`; }
+                    function formatFollowingCoefficient(value) { return (value >= 0) ? `+ ${formatNumber(value)}` : `- ${formatNumber(Math.abs(value))}`; }
+
+                    const a11 = sums1[0]; const a12 = sums1[1]; const b1 = sums1[3] - sums1[2];
+                    const a21 = sums2[0]; const a22 = sums2[1]; const b2 = sums2[3] - sums2[2];
+
+                    const det = a11 * a22 - a12 * a21;
+                    if (Math.abs(det) < 1e-10) { throw new Error('Hệ phương trình vô nghiệm hoặc vô số nghiệm (định thức bằng 0)'); }
+
+                    const aSol = (b1 * a22 - b2 * a12) / det;
+                    const bSol = (a11 * b2 - a21 * b1) / det;
+
+                    document.getElementById('normal-equations').innerHTML = `
+                    <p>\\[
+                        \\begin{cases}
+                            ${formatFirstCoefficient(sums1[0])}a ${formatFollowingCoefficient(sums1[1])}b ${formatFollowingCoefficient(sums1[2])} ${formatFollowingCoefficient(-sums1[3])} = 0 \\\\[1.1ex]
+                            ${formatFirstCoefficient(sums2[0])}a ${formatFollowingCoefficient(sums2[1])}b ${formatFollowingCoefficient(sums2[2])} ${formatFollowingCoefficient(-sums2[3])} = 0
+                        \\end{cases}
+                        \\quad
+                        \\Leftrightarrow
+                        \\quad
+                        \\begin{cases}
+                            ${formatFirstCoefficient(a11)}a ${formatFollowingCoefficient(a12)}b = ${formatFirstCoefficient(formatNumber(-b1))} \\\\[1.1ex]
+                            ${formatFirstCoefficient(a21)}a ${formatFollowingCoefficient(a22)}b = ${formatFirstCoefficient(formatNumber(-b2))}
+                        \\end{cases}
+                        \\quad
+                        \\to 
+                        \\begin{cases}
+                            a = ${formatNumber(aSol)}\\\\[1.1ex]
+                            b = ${formatNumber(bSol)}
+                        \\end{cases}
+                    \\]</p>`;
+
+                    // --- PHẦN KẾT LUẬN ---
+                    // 1. Làm tròn các hệ số a và b
+                    const aFormatted = formatNumber(aSol);
+                    const bFormatted = formatNumber(bSol);
+
+                    // 2. Bọc trong ngoặc đơn nếu là số âm để tránh lỗi cú pháp toán học, ví dụ: 5 + (-2)*x
+                    const aTerm = parseFloat(aFormatted) < 0 ? `(${aFormatted})` : aFormatted;
+                    const bTerm = parseFloat(bFormatted) < 0 ? `(${bFormatted})` : bFormatted;
+
+                    // 3. Lấy các biểu thức của f(a) và f(b)
+                    const f_a_expr = groupExpressionIfNeeded(f_a);
+                    const f_b_expr = groupExpressionIfNeeded(f_b);
+
+                    // 4. Xây dựng chuỗi biểu thức toán học "sạch"
+                    // Bắt đầu với hệ số a
+                    let finalExprString = `${aTerm}${f_a_expr}`;
+
+                    // Thêm hệ số b, kiểm tra dấu để thêm " + " hoặc không
+                    // Dấu trừ đã được bao gồm trong bTerm, ví dụ "(-1.23)" nên chỉ cần một khoảng trắng
+                    if (parseFloat(bFormatted) >= 0) {
+                        finalExprString += ` + ${bTerm}${f_b_expr}`;
+                    } else {
+                        finalExprString += ` ${bTerm}${f_b_expr}`;
+                    }
+
+                    // Thêm hệ số tự do nếu có
+                    if (f_free && f_free.trim() !== '0' && f_free.trim() !== '') {
+                        finalExprString += ` + ${f_free}`;
+                    }
+
+                    // 5. Đưa chuỗi đã được xử lý vào hàm formatExpression để tạo LaTeX
+                    document.getElementById('final-result').innerHTML = `
+                        <p style="font-size: 16px">Kết luận: \\( y = ${formatExpression(finalExprString)} \\)</p>
+                    `;
+                    // --- KẾT THÚC PHẦN KẾT LUẬN ---
+                    resultSection.classList.add('show');
+                    if (typeof MathJax !== 'undefined') MathJax.typesetPromise();
+
+                    // --- PHẦN KÍCH HOẠT HIỆU ỨNG TUẦN TỰ ---
+                    const blocks = resultSection.querySelectorAll('.result-block');
+                    blocks.forEach((block, index) => {
+                        setTimeout(() => {
+                            block.classList.add('visible');
+                        }, index * 150); // Độ trễ 150ms giữa mỗi khối
+                    });
+
+                } catch (e) {
+                    resultSection.innerHTML = `<div class="error"><h3>Lỗi</h3><p>${e.message}</p></div>`;
+                    resultSection.classList.add('show');
+                }
+            });
+        }
+
+        /* --- JAVASCRIPT CHO BỘ ĐIỀU KHIỂN SỐ --- */
+        document.addEventListener('DOMContentLoaded', () => {
+            function setupCustomNumberInput(inputId, step, min, max) {
+                const input = document.getElementById(inputId);
+                const minusBtn = document.querySelector(`.btn-minus[data-input-id="${inputId}"]`);
+                const plusBtn = document.querySelector(`.btn-plus[data-input-id="${inputId}"]`);
+                if (!input || !minusBtn || !plusBtn) return;
+
+                let intervalId, timeoutId;
+
+                const changeValue = (amount) => {
+                    let val = parseInt(input.value) || 0;
+                    val += amount;
+                    if (min !== undefined && val < min) val = min;
+                    if (max !== undefined && val > max) val = max;
+                    input.value = val;
+                    // Kích hoạt sự kiện 'change' để cập nhật giao diện
+                    input.dispatchEvent(new Event('change'));
+                };
+
+                const startChanging = (amount) => {
+                    changeValue(amount);
+                    timeoutId = setTimeout(() => {
+                        intervalId = setInterval(() => { changeValue(amount); }, 50);
+                    }, 500);
+                };
+
+                const stopChanging = () => {
+                    clearTimeout(timeoutId);
+                    clearInterval(intervalId);
+                };
+
+                minusBtn.addEventListener('mousedown', () => startChanging(-step));
+                plusBtn.addEventListener('mousedown', () => startChanging(step));
+                document.addEventListener('mouseup', stopChanging);
+                [minusBtn, plusBtn].forEach(btn => btn.addEventListener('mouseleave', stopChanging));
+            }
+
+            setupCustomNumberInput('floatpoint', 1, 1, 34);
+            setupCustomNumberInput('n', 1, 2); // Thiết lập cho bộ điều khiển số điểm
+        });
+    </script>
+</body>
+
+</html>
