@@ -4,659 +4,806 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bình phương Cực Tiểu</title>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.7.0/math.js"></script>
+    <title>Tính Toán số - Hiện Đại</title>
+    <link rel="icon" href="./img/icon-webs.png" type="image/x-icon">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2980b9;
-            --background-color: #f8f9fa;
-            --text-color: #333;
-            --border-color: #ddd;
-            --success-color: #2ecc71;
-            --error-color: #e74c3c;
-        }
-
-        /* --- CÀI ĐẶT CHUNG --- */
+        /* --- CÀI ĐẶT CHUNG & NỀN BODY --- */
+        html,
         body {
-            background: rgb(255, 255, 255);
-            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            /* Đã sửa từ height: 100%; */
             margin: 0;
-            padding: 20px;
-            line-height: 1.6;
-            color: var(--text-color);
+            overflow: hidden;
+            /* Ngăn cuộn trang không mong muốn */
         }
 
-        h1 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-
-        h2,
-        h3 {
-            color: #2c3e50;
-            font-weight: 500;
-        }
-
-        /* --- BỐ CỤC CHÍNH --- */
-        .main-container {
+        body {
+            background: linear-gradient(-45deg, #A0D2DB, #B2FCE5, #CFEAF7, #E6E6FA, #FFFDD0, #A0D2DB);
+            background-size: 500% 500%;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
-            gap: 20px;
-            align-items: flex-start;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            /* Cho định vị các phần tử con */
+            animation: fluidBackground 35s ease infinite;
         }
 
-        .input-column {
-            flex-shrink: 0;
+        @keyframes fluidBackground {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            25% {
+                background-position: 100% 0%;
+            }
+
+            50% {
+                background-position: 100% 100%;
+            }
+
+            75% {
+                background-position: 0% 100%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
-        .result-column {
-            flex-grow: 1;
-            min-width: 0;
-        }
-
-        .input-section {
-            width: 330px;
-            background-color: rgb(240, 245, 255);
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .input-group {
-            margin-bottom: 10px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #2c3e50;
-        }
-
-        input {
+        /* --- HIỆU ỨNG CHUYỂN TRANG --- */
+        #page-transition-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        button {
-            background: linear-gradient(to right, #0D47A1, #0288D1, #4FC3F7);
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-            width: 100%;
-            font-weight: 500;
-            margin-top: 10px;
-        }
-
-        /* --- BỘ ĐIỀU KHIỂN SỐ --- */
-        .number-input-wrapper {
-            display: flex;
-            align-items: center;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            background-color: white;
-            padding: 0;
-        }
-
-        .number-input-wrapper input {
-            flex: 1;
-            min-width: 50px;
-            text-align: center;
-            border: none;
-            padding: 12px 5px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .number-input-wrapper input::-webkit-outer-spin-button,
-        .number-input-wrapper input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        .number-input-wrapper input[type=number] {
-            -moz-appearance: textfield;
-        }
-
-        .number-input-wrapper button {
-            flex-shrink: 0;
-            width: 40px;
-            padding: 0;
-            background: transparent;
-            border: none;
-            color: var(--text-color);
-            font-size: 20px;
-            height: auto;
-            margin-top: 0;
-        }
-
-        .number-input-wrapper button:hover {
-            background-color: #f0f0f0;
-        }
-
-        .number-input-wrapper .btn-minus {
-            border-right: 1px solid var(--border-color);
-        }
-
-        .number-input-wrapper .btn-plus {
-            border-left: 1px solid var(--border-color);
-        }
-
-        .number-input-wrapper input[readonly] {
-            cursor: default;
-            background-color: white;
-        }
-
-        .input-group.horizontal {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .input-group.horizontal label {
-            margin-bottom: 0;
-            min-width: 100px;
-        }
-
-        .input-group.horizontal .number-input-wrapper {
-            flex-grow: 1;
-            /* có thể thay bằng số cho ô tăng giảm là width */
-        }
-
-        /* --- KHỐI NHẬP ĐIỂM DỮ LIỆU --- */
-        #data-points-container .data-point-row {
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        #data-points-container .data-point-row label {
-            min-width: 50px;
-            font-weight: bold;
-            margin-right: 10px;
-            margin-bottom: 0;
-        }
-
-        #data-points-container .data-point-row input {
-            width: 80px;
-            margin-right: 10px;
-            padding: 8px;
-            flex-shrink: 0;
-        }
-
-        /* --- KHỐI KẾT QUẢ --- */
-        .result-section {
-            background-color: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            display: none;
-        }
-
-        .result-section.show {
-            display: block;
-        }
-
-        .result-title {
-            color: #2c3e50;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 12px;
-            margin-top: 0;
-        }
-
-
-        /* --- CSS MỚI CHO HIỆU ỨNG KHỐI CON --- */
-        .result-block {
-            /* Trạng thái ban đầu: trong suốt và bị đẩy xuống dưới */
+            height: 100%;
+            background: linear-gradient(60deg,
+                    #B9E1F9,
+                    /* Xanh lam nhạt */
+                    #D8BFD8,
+                    /* Tím Pastel / Hồng khói */
+                    #FADADD
+                    /* Hồng phấn nhạt */
+                );
+            z-index: 99999;
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            transform: scale(1.1);
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.7, 0, 0.3, 1),
+                transform 0.6s cubic-bezier(0.7, 0, 0.3, 1);
         }
 
-        .result-block.visible {
-            /* Trạng thái cuối cùng: rõ ràng và ở đúng vị trí */
+        #page-transition-effect.page-is-leaving {
             opacity: 1;
-            transform: translateY(0);
+            transform: scale(1);
+            pointer-events: auto;
         }
 
-        table {
+        #page-transition-effect.page-is-entering {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        #page-transition-effect.page-is-entering.revealing-page {
+            opacity: 0;
+            transform: scale(0.9);
+            pointer-events: none;
+        }
+
+        /* --- KEYFRAMES CHO ANIMATION NÚT --- */
+        @keyframes oneWayFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: var(--bg-pos-end) 50%;
+            }
+        }
+
+        /* --- TIÊU ĐỀ CHÍNH H1 --- */
+        .custom-title {
+            position: relative;
+            display: inline-block;
+            font-family: 'Playfair Display', serif;
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #4FC3F7, #FFCCFF);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin: 0 0 30px 0;
+            padding: 10px;
+            z-index: 10;
+            transition: transform .3s ease, text-shadow .3s ease;
+            user-select: none;
+        }
+
+        .custom-title:hover {
+            transform: scale(1.05);
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #FFCCFF, #4FC3F7);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .custom-title .overlay {
+            /* Để chặn context menu nếu cần */
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            border-collapse: collapse;
-            margin: 25px 0;
-            font-size: 12px;
+            height: 100%;
+            z-index: 10;
+            pointer-events: auto;
         }
 
-        td {
-            padding: 10px 15px;
+
+        /* --- NÚT BẤM CHUNG & TEXT CUSTOM --- */
+        .open-menu-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            z-index: 10;
+        }
+
+        .open-menu-button,
+        .nav-button {
+            /* Style chung cho nút, giữ lại các style nền, padding, radius, animation đã có */
+            border: none;
+            cursor: pointer;
             text-align: center;
-            border: 1px solid #eee;
-            min-width: 50px;
-            overflow-x: auto;
+            display: block;
+            flex-shrink: 0;
+            /* Transition mặc định cho nút (không phải text) */
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+                filter 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+                box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            /* Style cho text ẩn và hiển thị bằng pseudo-element */
+            position: relative;
+            color: transparent !important;
+            user-select: none;
         }
 
-        .math-formula {
-            background-color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            overflow-x: auto;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid var(--primary-color);
-            font-size: 14px;
-        }
-
-        .math-formula:hover {
-            background-color: #e6f6ff;
-        }
-
-        .final-result {
-            background-color: rgb(213, 233, 255);
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            overflow-x: auto;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid var(--primary-color);
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .final-result:active {
-            background-color: #006fcf;
+        .open-menu-button::before,
+        .nav-button::before {
+            content: attr(data-text);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
             color: white;
+            letter-spacing: 0.03em;
+            pointer-events: none;
+            font-size: inherit;
+            /* Kế thừa font-size từ nút cha */
+            transition: text-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        .error {
-            color: var(--error-color);
-            background-color: #fde8e8;
-            padding: 15px;
+        /* Trạng thái ACTIVE chung cho nút và text (để mượt mà) */
+        .open-menu-button:active,
+        .nav-button:active {
+            transition-duration: 0.05s !important;
+            /* Nhấn xuống nhanh */
+        }
+
+        .open-menu-button:active::before,
+        .nav-button:active::before {
+            transition-duration: 0.05s !important;
+            /* Text cũng phản hồi nhanh */
+        }
+
+        /* --- NÚT MỞ MENU CHÍNH --- */
+        .open-menu-button {
+            background: linear-gradient(to right, #00B7EB, #1E90FF, #8A2BE2, #1E90FF, #00B7EB);
+            background-size: 250% auto;
+            padding: 12px 25px;
             border-radius: 8px;
-            margin: 15px 0;
-            border-left: 4px solid var(--error-color);
-
+            font-size: 16px;
+            --bg-pos-end: 150%;
+            animation: oneWayFlow 6s linear infinite;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* --- BỐ CỤC CHO MÀN HÌNH NHỎ --- */
-        @media (max-width: 1024px) {
-            .main-container {
-                flex-direction: column;
+        .open-menu-button::before {
+            font-weight: 600;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.7), 0 0 10px rgba(173, 226, 230, 0.5), 0 0 15px rgba(220, 210, 250, 0.4);
+        }
+
+        .open-menu-button:hover {
+            transform: translateY(-4px) scale(1.05);
+            filter: brightness(120%);
+            box-shadow: 0 10px 25px rgba(30, 144, 255, 0.3);
+        }
+
+        .open-menu-button:hover::before {
+            text-shadow: 0 0 7px rgba(255, 255, 255, 0.9), 0 0 15px rgba(173, 226, 230, 0.7), 0 0 25px rgba(220, 210, 250, 0.6), 0 0 30px rgba(100, 200, 255, 0.3);
+        }
+
+        .open-menu-button:active {
+            /* Style nút khi active */
+            transform: translateY(-2px) scale(1.02);
+            filter: brightness(110%);
+            box-shadow: 0 6px 18px rgba(30, 144, 255, 0.2);
+        }
+
+        .open-menu-button:active::before {
+            /* Style text khi active */
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.6), 0 0 8px rgba(173, 226, 230, 0.4), 0 0 12px rgba(220, 210, 250, 0.3);
+        }
+
+        /* --- NÚT ĐIỀU HƯỚNG TRONG MODAL (NAV-BUTTON CHÍNH) --- */
+        .nav-button {
+            background: linear-gradient(45deg, #007BFF, #00C4B4, #0056b3, #00a294, #007BFF);
+            background-size: 300% auto;
+            padding: 14px 24px;
+            /* Giữ nguyên padding để tính toán chiều cao */
+            border-radius: 8px;
+            font-size: 15px;
+            /* Giữ nguyên font-size */
+            margin: 8px 0;
+            /* Giảm margin một chút để tiết kiệm không gian */
+            width: calc(100% - 10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --bg-pos-end: 200%;
+            animation: oneWayFlow 9s linear infinite;
+            width: 100%;
+            /* Cho nút chiếm toàn bộ chiều rộng của .button-containerk (đã trừ padding của container) */
+            margin-top: 8px;
+            margin-bottom: 8px;
+            margin-left: 0;
+            /* Không cần margin ngang nếu width là 100% và parent có align-items: center */
+            margin-right: 0;
+            box-sizing: border-box;
+        }
+
+        /* Chiều cao ước tính của nav-button: (14px*2 padding) + ~20px (line-height) + (8px*2 margin) = 28+20+16 = 64px */
+
+
+        .nav-button::before {
+            font-weight: 500;
+            text-shadow: 0 0 4px rgba(255, 255, 255, 0.6), 0 0 8px rgba(173, 226, 230, 0.4);
+        }
+
+        .nav-button:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 123, 255, 0.25);
+            filter: brightness(120%);
+        }
+
+        .nav-button:hover::before {
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.8), 0 0 12px rgba(173, 226, 230, 0.6), 0 0 20px rgba(200, 225, 255, 0.4);
+        }
+
+        .nav-button:active {
+            /* Style nút khi active */
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 18px rgba(0, 123, 255, 0.18);
+            filter: brightness(110%);
+        }
+
+        .nav-button:active::before {
+            /* Style text khi active */
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.5), 0 0 5px rgba(173, 226, 230, 0.3);
+        }
+
+        /* --- NÚT TRONG SUBMENU --- */
+        .submenu-vi-phan .nav-button {
+            background: linear-gradient(45deg, #6C7A89, #4B5C6B, #2E3B44, #4B5C6B, #6C7A89);
+            font-size: 15px;
+            padding: 10px 18px;
+            /* Giảm padding chút */
+            width: calc(95% - 10px);
+            /* Điều chỉnh width để có padding đồng đều */
+            margin: 6px auto;
+            /* Giảm margin */
+            --bg-pos-end: 200%;
+            animation: oneWayFlow 10s linear infinite;
+            /* Kế thừa nhiều style từ .nav-button gốc, bao gồm position, color transparent, user-select */
+        }
+
+        /* Chiều cao ước tính của sub-button: (10px*2 padding) + ~18px (line-height) + (6px*2 margin) = 20+18+12 = 50px */
+
+
+        .submenu-vi-phan .nav-button::before {
+            font-weight: 400;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.6), 0 0 6px rgba(200, 225, 255, 0.3);
+        }
+
+        .submenu-vi-phan .nav-button:hover {
+            transform: scale(1.06) translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 59, 68, 0.25);
+            filter: brightness(115%);
+        }
+
+        .submenu-vi-phan .nav-button:hover::before {
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(200, 225, 255, 0.5);
+        }
+
+        .submenu-vi-phan .nav-button:active {
+            /* Style nút khi active */
+            transform: scale(1.03) translateY(-1px);
+            filter: brightness(105%);
+        }
+
+        .submenu-vi-phan .nav-button:active::before {
+            /* Style text khi active */
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.5), 0 0 3px rgba(200, 225, 255, 0.2);
+        }
+
+        /* --- MODAL --- */
+        .modal {
+            visibility: hidden;
+            opacity: 0;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            /* Quan trọng: ngăn modal tự cuộn */
+            background-color: rgba(0, 0, 0, 0.5);
+            transition: opacity .4s ease-out, visibility 0s linear .4s;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+            transition-delay: 0s;
+        }
+
+        .modal-content {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 20px;
+            /* Giảm padding một chút */
+            border: 1px solid rgba(200, 200, 200, 0.3);
+            width: 90%;
+            /* Tăng width cho mobile */
+            max-width: 360px;
+            /* Giới hạn max-width */
+            border-radius: 15px;
+            /* Tăng độ cong */
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+            /* Tăng bóng đổ */
+
+            /* CHIỀU CAO MODAL: quan trọng cho việc hiển thị trên các màn hình */
+            max-height: 80vh;
+            /* Giới hạn chiều cao tối đa chung */
+
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            /* Bắt đầu từ dưới cùng */
+            transform: translate(-50%, 100%);
+            /* Ẩn ban đầu */
+            transition: transform .5s cubic-bezier(.25, .8, .25, 1);
+            overflow: hidden;
+            /* Ngăn nội dung tràn ra ngoài modal-content khi chưa cuộn */
+        }
+
+        .modal.active .modal-content {
+            bottom: 2vh;
+            /* Khoảng cách từ đáy màn hình khi hiển thị */
+            transform: translate(-50%, 0);
+            /* Trượt lên */
+        }
+
+        .modal-header {
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            margin-bottom: 15px;
+            /* Giảm margin */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+            /* Header không co lại */
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+            /* Giảm kích thước font */
+            font-weight: 600;
+            color: #333;
+        }
+
+        .close-button {
+            color: #888;
+            font-size: 30px;
+            /* Giảm kích thước */
+            font-weight: normal;
+            transition: color .3s ease, transform .3s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #E91E63;
+            text-decoration: none;
+            cursor: pointer;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        /* --- CONTAINER CHO CÁC NÚT TÍNH NĂNG --- */
+        .button-containerk {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* QUAN TRỌNG: Căn giữa các mục con theo chiều ngang */
+            overflow-y: auto;
+            flex-grow: 1;
+            max-height: 320px;
+            /* Hoặc giá trị max-height bạn đã thiết lập */
+
+            /* Bỏ margin-right âm và sử dụng padding đối xứng.
+           Thanh cuộn (nếu xuất hiện) sẽ nằm trong khu vực padding bên phải.
+        */
+            padding-left: 15px;
+            /* Điều chỉnh giá trị này để có khoảng đệm mong muốn */
+            padding-right: 15px;
+            /* Giữ giá trị này bằng padding-left để đối xứng */
+            /* margin-right: -15px;  <-- Bỏ dòng này */
+
+            box-sizing: border-box;
+            /* Để padding không làm tăng kích thước tổng thể của container */
+            scroll-behavior: smooth;
+        }
+
+        /* --- THANH CUỘN TÙY CHỈNH "CỰC KỲ ĐẸP MẮT" --- */
+        .button-containerk::-webkit-scrollbar {
+            width: 8px;
+            /* Độ rộng thanh cuộn */
+        }
+
+        .button-containerk::-webkit-scrollbar-track {
+            background: rgba(0, 80, 150, 0.08);
+            /* Màu nền của track, hơi xanh nhạt */
+            border-radius: 10px;
+            /* Bo tròn track */
+            margin: 5px 0;
+            /* Khoảng cách trên dưới cho track */
+        }
+
+        .button-containerk::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #007BFF, #00C4B4);
+            /* Gradient cho thumb */
+            border-radius: 10px;
+            /* Bo tròn thumb */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            /* Viền nhẹ cho thumb */
+            box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2),
+                /* Bóng đổ bên trong */
+                0 2px 5px rgba(0, 123, 255, 0.2);
+            /* Bóng đổ nhẹ bên ngoài */
+        }
+
+        .button-containerk::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #0056b3, #00a294);
+            /* Gradient đậm hơn khi hover */
+            box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3),
+                0 3px 7px rgba(0, 123, 255, 0.3);
+        }
+
+        /* For Firefox */
+        .button-containerk {
+            scrollbar-width: thin;
+            /* "auto" or "thin" */
+            scrollbar-color: #007BFF rgba(0, 80, 150, 0.08);
+            /* thumb track */
+        }
+
+
+        /* --- SUBMENU --- */
+        /* Trong phần <style> của bạn */
+
+        .submenu-vi-phan {
+            width: calc(100% - 10px);
+            padding-left: 0;
+            box-sizing: border-box;
+            /* overflow: hidden; */
+            /* Tạm thời bỏ overflow */
+            display: none;
+            /* Ẩn bằng display: none */
+            /* Bỏ các thuộc tính transition và transform cũ */
+        }
+
+        .submenu-vi-phan.active {
+            display: block !important;
+            /* Hiển thị bằng display: block, thêm !important để ưu tiên */
+            /* max-height: 110px;  Tạm thời bỏ max-height */
+            /* opacity: 1;  Tạm thời bỏ opacity */
+            /* transform: translateY(0); Tạm thời bỏ transform */
+            margin-top: 5px;
+        }
+
+
+        /* --- MEDIA QUERIES CHO CHẾ ĐỘ XOAY NGANG (LANDSCAPE) --- */
+        @media screen and (orientation: landscape) and (max-height: 480px) {
+            .custom-title {
+                font-size: 36px;
+                /* Giảm kích thước tiêu đề */
+                margin-bottom: 15px;
             }
 
-            .input-column {
-                width: 100%;
+            .open-menu-button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+
+            .modal-content {
+                max-height: 90vh;
+                /* Cho phép modal cao hơn trong landscape */
+                width: 60%;
+                /* Rộng hơn */
+                max-width: 450px;
+                bottom: 5vh;
+                /* Căn giữa hơn theo chiều dọc */
+            }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+
+            .button-containerk {
+                /* Tính toán lại max-height cho container nút trong landscape */
+                /* Ưu tiên chiều cao của modal trừ đi header */
+                /* Ví dụ: 90vh (modal) - ~60px (header) - 20px (padding modal) */
+                max-height: calc(90vh - 60px - 20px - 15px);
+                /* Trừ chiều cao header và các padding */
+                /* Đồng thời không vượt quá chiều cao của 5 item nếu không gian đủ */
+                /* min() không dùng trực tiếp trong max-height kiểu này */
+                /* CSS Houdini paint API hoặc JS có thể làm điều này phức tạp hơn, hiện tại để CSS đơn giản */
+            }
+
+            /* Nếu button-containerk vẫn quá ngắn, bạn có thể giảm font-size các nút trong landscape */
+            .nav-button {
+                font-size: 14px;
+                padding: 10px 20px;
+                margin: 6px 0;
+            }
+
+            .submenu-vi-phan .nav-button {
+                font-size: 13px;
+                padding: 8px 15px;
+                margin: 5px auto;
+            }
+
+            .submenu-vi-phan.active {
+                max-height: 95px;
+                /* Điều chỉnh cho nút con nhỏ hơn */
             }
         }
 
-        @media (max-width: 768px) {
-            body {
-                width: 900px;
+
+        /* --- BONG BÓNG (Giữ nguyên) --- */
+        .bubble {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            animation: floatBubble ease-out forwards;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.6), 0 0 4px rgba(255, 255, 255, 0.35), 0 0 15px var(--bubble-glow-color, rgba(220, 240, 255, 0.3));
+            z-index: 990;
+        }
+
+        @keyframes floatBubble {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(.2);
             }
 
-            .input-section {
-                width: 800px;
+            15% {
+                opacity: 1;
             }
 
-            .input-group.horizontal .number-input-wrapper {
-                flex-grow: 0;
-                width: 180px;
+            100% {
+                opacity: 0;
+                transform: translate(calc(-50% + var(--bubble-drift-x, 0px)), calc(-50% + var(--bubble-drift-y, -150px))) scale(var(--bubble-end-scale, 1.0));
             }
-
         }
     </style>
 </head>
 
 <body>
+    <div id="page-transition-effect"></div>
+    <h1 class="custom-title">
+        Toán học Ứng dụng
+        <div class="overlay" oncontextmenu="return false;"></div>
+    </h1>
+    <div class="open-menu-button-container">
+        <button class="open-menu-button" id="openMenuBtn" data-text="Mở Menu Tính Năng">Mở Menu Tính Năng</button>
+    </div>
 
-    <div class="main-container">
-        <div class="input-column">
-            <h1>PP - BPCT</h1>
-            <div class="input-section">
-                <div class="input-group">
-                    <label for="f_a">Biểu thức của hệ số a:</label>
-                    <input type="text" id="f_a" placeholder="x" value="3^x + x">
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Menu</h2>
+                <span class="close-button" id="closeBtn">&times;</span>
+            </div>
+            <div class="button-containerk">
+                <button class="nav-button" onclick="navigateWithTransition('./feature/pt.html')"
+                    data-text="Giải Phương trình">Giải Phương trình</button>
+                <button class="nav-button" onclick="navigateWithTransition('./feature/hpt.html')"
+                    data-text="Giải Hệ 3 pt">Giải Hệ 3 pt</button>
+                <button class="nav-button" onclick="navigateWithTransition('./feature/bpct.html')"
+                    data-text="PP Bình phương cực tiểu">PP Bình phương cực tiểu</button>
+                <button class="nav-button" onclick="navigateWithTransition('./feature/tp.html')"
+                    data-text="Tính Tích phân">Tính Tích phân</button>
+                <button class="nav-button" id="phuongTrinhViPhanBtn" data-text="Phương trình vi phân">Phương trình vi
+                    phân</button>
+                <div id="subMenuViPhan" class="submenu-vi-phan">
+                    <button class="nav-button" onclick="navigateWithTransition('./feature/vp-ct.html')"
+                        data-text="PP Euler cải tiến">PP Euler cải tiến</button>
+                    <button class="nav-button" onclick="navigateWithTransition('./feature/vp-rk.html')"
+                        data-text="PP Runge-Kutta">PP Runge-Kutta</button>
                 </div>
-                <div class="input-group">
-                    <label for="f_b">Biểu thức của hệ số b:</label>
-                    <input type="text" id="f_b" placeholder="1" value="x^3 + 1">
-                </div>
-                <div class="input-group">
-                    <label for="f_free">Biểu thức tự do:</label>
-                    <input type="text" id="f_free" placeholder="0" value="2">
-                </div>
-                <small style="color: #7f8c8d; font-size: 0.9em;">Dùng cú pháp: log, sin, cos, exp, sqrt, ^</small>
-
-                <div class="input-group horizontal" style="margin-top: 15px;">
-                    <label for="n">Số điểm:</label>
-                    <div class="number-input-wrapper">
-                        <button type="button" class="btn-minus" data-input-id="n">-</button>
-                        <input type="number" id="n" min="2" step="1" value="3" readonly>
-                        <button type="button" class="btn-plus" data-input-id="n">+</button>
-                    </div>
-                </div>
-
-                <div id="data-points-container"></div>
-
-                <div class="input-group horizontal">
-                    <label for="floatpoint">Làm tròn số:</label>
-                    <div class="number-input-wrapper">
-                        <button type="button" class="btn-minus" data-input-id="floatpoint">-</button>
-                        <input type="number" id="floatpoint" min="1" max="15" step="1" value="6" readonly>
-                        <button type="button" class="btn-plus" data-input-id="floatpoint">+</button>
-                    </div>
-                </div>
-                <button onclick="calculateLeastSquares()">Tính toán</button>
             </div>
         </div>
-
-        <div id="result" class="result-section result-column">
-        </div>
-
     </div>
 
     <script>
-        let dataPoints = [];
+        // --- JavaScript cho Hiệu ứng chuyển trang (Giữ nguyên) ---
+        const PAGE_TRANSITION_DURATION = 600;
 
-        document.getElementById('n').addEventListener('change', function () {
-            const n = parseInt(this.value);
-            // Không cần kiểm tra n < 2 nữa vì bộ điều khiển số đã xử lý
-            const container = document.getElementById('data-points-container');
-            container.innerHTML = '';
-            let temp_x = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-            let temp_y = [3.33, 5.33, 14.67, 1, 2, 3, 4, 5, 6, 1, 1, 2, 3, 4, 3, 2];
-            const xRow = document.createElement('div');
-            xRow.className = 'data-point-row';
-            let xInputsHTML = '<label> x</label>';
-            for (let i = 0; i < n; i++) {
-                const x_val = (i < temp_x.length) ? temp_x[i] : '';
-                xInputsHTML += `<input type="number" id="x_${i}" step="any" placeholder="x${i + 1}" value="${x_val}">`;
-            }
-            xRow.innerHTML = xInputsHTML;
-            container.appendChild(xRow);
-            const yRow = document.createElement('div');
-            yRow.className = 'data-point-row';
-            let yInputsHTML = '<label>y</label>';
-            for (let i = 0; i < n; i++) {
-                const y_val = (i < temp_y.length) ? temp_y[i] : '';
-                yInputsHTML += `<input type="number" id="y_${i}" step="any" placeholder="y${i + 1}" value="${y_val}">`;
-            }
-            yRow.innerHTML = yInputsHTML;
-            container.appendChild(yRow);
-        });
-
-        document.getElementById('n').dispatchEvent(new Event('change'));
-
-        function formatNumber(num) {
-            const dcd = parseInt(document.getElementById('floatpoint').value);
-            if (num === null || num === undefined || isNaN(num)) return "NaN";
-            let str = num.toFixed(dcd);
-            if (str.includes('.')) {
-                str = str.replace(/\.?0+$/, '');
-            }
-            if (str.endsWith('.')) {
-                str = str.slice(0, -1);
-            }
-            return str === '' ? '0' : str;
-        }
-
-        function format_k(expr) {
-            try {
-                const node = math.parse(expr);
-                return node.toTex({ parenthesis: 'auto' }).replace(/x/g, 'x_{k}').replace(/y/g, 'y_{k}');
-            } catch (e) {
-                return expr.replace(/\bx\b/g, 'x_{k}').replace(/\by\b/g, 'y_{k}');
-            }
-        }
-
-        function groupExpressionIfNeeded(exprStr) {
-            if (!exprStr || typeof exprStr !== 'string') return exprStr;
-            const trimmedExpr = exprStr.trim();
-            if (trimmedExpr === '') return '';
-            try {
-                const node = math.parse(trimmedExpr);
-                if (node.isParenthesisNode) return trimmedExpr;
-                if (node.isOperatorNode && (node.op === '+' || node.op === '-') && node.args && node.args.length === 2) {
-                    return `(${trimmedExpr})`;
-                }
-                return trimmedExpr;
-            } catch (e) {
-                return exprStr;
-            }
-        }
-
-        function formatExpression(expr) {
-            try {
-                const node = math.parse(expr);
-                return node.toTex({ parenthesis: 'auto' });
-            } catch (e) {
-                return expr;
-            }
-        }
-
-        function calculateLeastSquares() {
-            const resultSection = document.getElementById('result');
-            resultSection.innerHTML = ''; // Xóa nội dung cũ để tránh hiển thị lỗi cũ
-            resultSection.classList.remove('show');
-
-            requestAnimationFrame(() => {
-                try {
-                    const f_a = document.getElementById('f_a').value || '0';
-                    const f_b = document.getElementById('f_b').value || '0';
-                    const f_free = document.getElementById('f_free').value || '0';
-                    const n = parseInt(document.getElementById('n').value);
-
-                    dataPoints = [];
-                    for (let i = 0; i < n; i++) {
-                        const x = parseFloat(document.getElementById(`x_${i}`).value);
-                        const y = parseFloat(document.getElementById(`y_${i}`).value);
-                        if (isNaN(x) || isNaN(y)) {
-                            throw new Error(`Vui lòng nhập số hợp lệ cho điểm dữ liệu ${i + 1}`);
-                        }
-                        dataPoints.push({ x, y });
-                    }
-
-                    // Tạo lại cấu trúc HTML cho kết quả
-                    resultSection.innerHTML = `
-                        <h2 class="result-title">Kết quả</h2>
-                        <div class="math-formula result-block" style="display: flex; align-items: center;padding: 0; margin: 0;">
-                            <div id="function-display" style="flex: 1; padding: 15px 0;"></div>
-                            <div id="data-points-display" style="flex: 1;"></div>
-                        </div>
-                        <div id="sum-squares" class="math-formula result-block"></div>
-                        <div id="sum-formulas" class="math-formula result-block"></div>
-                        <div id="normal-equations" class="math-formula result-block"></div>
-                        <div id="final-result" class="final-result result-block"></div>
-                    `;
-
-                    document.getElementById('function-display').innerHTML = `
-                        <p>\\[ y = ${formatExpression(`a${groupExpressionIfNeeded(f_a)} + b${groupExpressionIfNeeded(f_b)} ${f_free ? ' + ' + f_free : ''}`)} \\]</p>`;
-
-                    document.getElementById('data-points-display').innerHTML = `
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td style="font-weight: bold; text-align: right; padding-right: 15px;">\\(x_k\\)</td>${dataPoints.map(point => `<td>\\(${point.x}\\)</td>`).join('')}
-                                </tr>
-                                <tr>
-                                    <td style="font-weight: bold; text-align: right; padding-right: 15px;">\\(y_k\\)</td>${dataPoints.map(point => `<td>\\(${point.y}\\)</td>`).join('')}
-                                </tr>
-                            </tbody>
-                        </table>`;
-
-                    document.getElementById('sum-squares').innerHTML = `
-                        <p>\\[ 
-                            S = \\sum_{k=1}^{${n}} ${formatExpression(format_k(`(a${groupExpressionIfNeeded(f_a)} + b${groupExpressionIfNeeded(f_b)} ${f_free ? ' + ' + f_free : ''} - y)^2 `))} 
-                            \\quad 
-                            \\to 
-                            \\quad 
-                            \\begin{cases} 
-                                S'_{a} = 2 \\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(`(a${groupExpressionIfNeeded(f_a)} + b${groupExpressionIfNeeded(f_b)} ${f_free ? ' + ' + f_free : ''} - y) ${groupExpressionIfNeeded(f_a)}`))} = 0 \\\\[2ex] 
-                                S'_{b} = 2 \\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(`(a${groupExpressionIfNeeded(f_a)} + b${groupExpressionIfNeeded(f_b)} ${f_free ? ' + ' + f_free : ''} - y) ${groupExpressionIfNeeded(f_b)}`))} = 0 
-                            \\end{cases} 
-                        \\]</p>`;
-
-                    const he_pt1 = [`(${f_a})*(${f_a})`, `(${f_a})*(${f_b})`, `(${f_a})*(${f_free})`, `(${f_a})*y`];
-                    const he_pt2 = [`(${f_b})*(${f_a})`, `(${f_b})*(${f_b})`, `(${f_b})*(${f_free})`, `(${f_b})*y`];
-
-                    document.getElementById('sum-formulas').innerHTML = `
-                        <p>\\[ 
-                            \\begin{cases} 
-                                \\left( \\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt1[0]))}\\right)a + \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt1[1]))}\\right)b + \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt1[2]))}\\right) - \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt1[3]))} \\right) = 0 \\\\[1.1ex] 
-                                \\left( \\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt2[0]))}\\right)a + \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt2[1]))}\\right)b + \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt2[2]))}\\right) - \\left(\\sum\\limits_{k=1}^{${n}} ${formatExpression(format_k(he_pt2[3]))} \\right) = 0 \\end{cases} 
-                        \\]</p>`;
-
-                    const sums1 = [0, 0, 0, 0];
-                    const sums2 = [0, 0, 0, 0];
-
-                    dataPoints.forEach(point => {
-                        const scope = { x: point.x, y: point.y };
-                        for (let i = 0; i < 4; i++) {
-                            sums1[i] += math.evaluate(he_pt1[i], scope);
-                            sums2[i] += math.evaluate(he_pt2[i], scope);
-                        }
-                    });
-
-                    function formatFirstCoefficient(value) { return (value >= 0) ? `${formatNumber(value)}` : `- ${formatNumber(Math.abs(value))}`; }
-                    function formatFollowingCoefficient(value) { return (value >= 0) ? `+ ${formatNumber(value)}` : `- ${formatNumber(Math.abs(value))}`; }
-
-                    const a11 = sums1[0]; const a12 = sums1[1]; const b1 = sums1[3] - sums1[2];
-                    const a21 = sums2[0]; const a22 = sums2[1]; const b2 = sums2[3] - sums2[2];
-
-                    const det = a11 * a22 - a12 * a21;
-                    if (Math.abs(det) < 1e-10) { throw new Error('Hệ phương trình vô nghiệm hoặc vô số nghiệm (định thức bằng 0)'); }
-
-                    const aSol = (b1 * a22 - b2 * a12) / det;
-                    const bSol = (a11 * b2 - a21 * b1) / det;
-
-                    document.getElementById('normal-equations').innerHTML = `
-                    <p>\\[
-                        \\begin{cases}
-                            ${formatFirstCoefficient(sums1[0])}a ${formatFollowingCoefficient(sums1[1])}b ${formatFollowingCoefficient(sums1[2])} ${formatFollowingCoefficient(-sums1[3])} = 0 \\\\[1.1ex]
-                            ${formatFirstCoefficient(sums2[0])}a ${formatFollowingCoefficient(sums2[1])}b ${formatFollowingCoefficient(sums2[2])} ${formatFollowingCoefficient(-sums2[3])} = 0
-                        \\end{cases}
-                        \\quad
-                        \\Leftrightarrow
-                        \\quad
-                        \\begin{cases}
-                            ${formatFirstCoefficient(a11)}a ${formatFollowingCoefficient(a12)}b = ${formatFirstCoefficient(formatNumber(-b1))} \\\\[1.1ex]
-                            ${formatFirstCoefficient(a21)}a ${formatFollowingCoefficient(a22)}b = ${formatFirstCoefficient(formatNumber(-b2))}
-                        \\end{cases}
-                        \\quad
-                        \\to 
-                        \\begin{cases}
-                            a = ${formatNumber(aSol)}\\\\[1.1ex]
-                            b = ${formatNumber(bSol)}
-                        \\end{cases}
-                    \\]</p>`;
-
-                    // --- PHẦN KẾT LUẬN ---
-                    // 1. Làm tròn các hệ số a và b
-                    const aFormatted = formatNumber(aSol);
-                    const bFormatted = formatNumber(bSol);
-
-                    // 2. Bọc trong ngoặc đơn nếu là số âm để tránh lỗi cú pháp toán học, ví dụ: 5 + (-2)*x
-                    const aTerm = parseFloat(aFormatted) < 0 ? `(${aFormatted})` : aFormatted;
-                    const bTerm = parseFloat(bFormatted) < 0 ? `(${bFormatted})` : bFormatted;
-
-                    // 3. Lấy các biểu thức của f(a) và f(b)
-                    const f_a_expr = groupExpressionIfNeeded(f_a);
-                    const f_b_expr = groupExpressionIfNeeded(f_b);
-
-                    // 4. Xây dựng chuỗi biểu thức toán học "sạch"
-                    // Bắt đầu với hệ số a
-                    let finalExprString = `${aTerm}${f_a_expr}`;
-
-                    // Thêm hệ số b, kiểm tra dấu để thêm " + " hoặc không
-                    // Dấu trừ đã được bao gồm trong bTerm, ví dụ "(-1.23)" nên chỉ cần một khoảng trắng
-                    if (parseFloat(bFormatted) >= 0) {
-                        finalExprString += ` + ${bTerm}${f_b_expr}`;
-                    } else {
-                        finalExprString += ` ${bTerm}${f_b_expr}`;
-                    }
-
-                    // Thêm hệ số tự do nếu có
-                    if (f_free && f_free.trim() !== '0' && f_free.trim() !== '') {
-                        finalExprString += ` + ${f_free}`;
-                    }
-
-                    // 5. Đưa chuỗi đã được xử lý vào hàm formatExpression để tạo LaTeX
-                    document.getElementById('final-result').innerHTML = `
-                        <p style="font-size: 16px">Kết luận: \\( y = ${formatExpression(finalExprString)} \\)</p>
-                    `;
-                    // --- KẾT THÚC PHẦN KẾT LUẬN ---
-                    resultSection.classList.add('show');
-                    if (typeof MathJax !== 'undefined') MathJax.typesetPromise();
-
-                    // --- PHẦN KÍCH HOẠT HIỆU ỨNG TUẦN TỰ ---
-                    const blocks = resultSection.querySelectorAll('.result-block');
-                    blocks.forEach((block, index) => {
-                        setTimeout(() => {
-                            block.classList.add('visible');
-                        }, index * 150); // Độ trễ 150ms giữa mỗi khối
-                    });
-
-                } catch (e) {
-                    resultSection.innerHTML = `<div class="error"><h3>Lỗi</h3><p>${e.message}</p></div>`;
-                    resultSection.classList.add('show');
-                }
-            });
-        }
-
-        /* --- JAVASCRIPT CHO BỘ ĐIỀU KHIỂN SỐ --- */
         document.addEventListener('DOMContentLoaded', () => {
-            function setupCustomNumberInput(inputId, step, min, max) {
-                const input = document.getElementById(inputId);
-                const minusBtn = document.querySelector(`.btn-minus[data-input-id="${inputId}"]`);
-                const plusBtn = document.querySelector(`.btn-plus[data-input-id="${inputId}"]`);
-                if (!input || !minusBtn || !plusBtn) return;
-
-                let intervalId, timeoutId;
-
-                const changeValue = (amount) => {
-                    let val = parseInt(input.value) || 0;
-                    val += amount;
-                    if (min !== undefined && val < min) val = min;
-                    if (max !== undefined && val > max) val = max;
-                    input.value = val;
-                    // Kích hoạt sự kiện 'change' để cập nhật giao diện
-                    input.dispatchEvent(new Event('change'));
-                };
-
-                const startChanging = (amount) => {
-                    changeValue(amount);
-                    timeoutId = setTimeout(() => {
-                        intervalId = setInterval(() => { changeValue(amount); }, 50);
-                    }, 500);
-                };
-
-                const stopChanging = () => {
-                    clearTimeout(timeoutId);
-                    clearInterval(intervalId);
-                };
-
-                minusBtn.addEventListener('mousedown', () => startChanging(-step));
-                plusBtn.addEventListener('mousedown', () => startChanging(step));
-                document.addEventListener('mouseup', stopChanging);
-                [minusBtn, plusBtn].forEach(btn => btn.addEventListener('mouseleave', stopChanging));
+            const transitioner = document.getElementById('page-transition-effect');
+            if (transitioner) {
+                transitioner.classList.add('page-is-entering');
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        transitioner.classList.add('revealing-page');
+                    }, 20);
+                });
+                transitioner.addEventListener('transitionend', () => {
+                    if (transitioner.classList.contains('revealing-page')) {
+                        transitioner.classList.remove('page-is-entering');
+                        transitioner.classList.remove('revealing-page');
+                        transitioner.style.pointerEvents = 'none';
+                    }
+                }, { once: true });
             }
-
-            setupCustomNumberInput('floatpoint', 1, 1, 34);
-            setupCustomNumberInput('n', 1, 2); // Thiết lập cho bộ điều khiển số điểm
         });
+
+        function navigateWithTransition(url) {
+            const transitioner = document.getElementById('page-transition-effect');
+            if (transitioner) {
+                transitioner.style.pointerEvents = 'auto';
+                transitioner.classList.add('page-is-leaving');
+                setTimeout(() => {
+                    window.location.href = url;
+                }, PAGE_TRANSITION_DURATION);
+            } else {
+                document.body.style.transition = 'opacity 0.3s ease-out';
+                document.body.style.opacity = '0';
+                setTimeout(() => { window.location.href = url; }, 300);
+            }
+        }
+
+        // --- JavaScript cho Modal (Giữ nguyên) ---
+        var modal = document.getElementById("myModal");
+        var btnOpen = document.getElementById("openMenuBtn");
+        var btnClose = document.getElementById("closeBtn");
+        var buttonContainer = document.querySelector(".button-containerk"); // Thêm biến này
+
+        btnOpen.onclick = function () {
+            modal.classList.add("active");
+            // Khi modal mở, đặt lại scroll về đầu nếu cần
+            if (buttonContainer) {
+                buttonContainer.scrollTop = 0;
+            }
+        }
+        btnClose.onclick = function () { modal.classList.remove("active"); }
+        modal.onclick = function (event) {
+            if (event.target === modal) { modal.classList.remove("active"); }
+        }
+
+        // --- JavaScript cho Submenu (ĐIỀU CHỈNH NHẸ cho cuộn) ---
+        var phuongTrinhViPhanBtn = document.getElementById("phuongTrinhViPhanBtn");
+        var subMenuViPhan = document.getElementById("subMenuViPhan");
+
+        phuongTrinhViPhanBtn.onclick = function (event) {
+            event.preventDefault(); // Ngăn hành vi mặc định nếu đây là link <a>
+            const wasActive = subMenuViPhan.classList.contains("active");
+
+            subMenuViPhan.classList.toggle("active");
+
+            // Nếu submenu vừa được MỞ (tức là trước đó nó không active và bây giờ active)
+            if (!wasActive && subMenuViPhan.classList.contains("active")) {
+                // Đợi một chút để CSS transition cho max-height có hiệu lực
+                // và layout được cập nhật hoàn chỉnh trước khi cuộn.
+                setTimeout(() => {
+                    // Cuộn buttonContainer (phần tử cha có scroll)
+                    // để đảm bảo nút cha (phuongTrinhViPhanBtn) và phần đầu của submenu
+                    // được hiển thị rõ ràng.
+                    if (buttonContainer) { // buttonContainer là .button-containerk
+                        // Tính toán vị trí của phuongTrinhViPhanBtn so với buttonContainer
+                        const buttonTopInContainer = phuongTrinhViPhanBtn.offsetTop - buttonContainer.offsetTop;
+                        const subMenuHeight = subMenuViPhan.offsetHeight;
+
+                        // Kiểm tra xem phần dưới của submenu có bị che không
+                        const spaceNeeded = (buttonTopInContainer + phuongTrinhViPhanBtn.offsetHeight + subMenuHeight) - (buttonContainer.scrollTop + buttonContainer.clientHeight);
+
+                        if (spaceNeeded > 0) { // Nếu bị che ở dưới
+                            buttonContainer.scrollBy({ top: spaceNeeded + 10, behavior: 'smooth' }); // +10px padding
+                        } else if (buttonTopInContainer < buttonContainer.scrollTop) { // Nếu nút cha bị che ở trên
+                            buttonContainer.scrollTo({ top: buttonTopInContainer - 10, behavior: 'smooth' }); // -10px padding
+                        }
+                        // Nếu không bị che đáng kể, không cần cuộn mạnh, trình duyệt có thể tự xử lý.
+                        // Hoặc đơn giản hơn:
+                        // phuongTrinhViPhanBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        // Dòng trên thường cuộn chính phuongTrinhViPhanBtn vào view,
+                        // có thể không tối ưu bằng cách tính toán vị trí submenu.
+                        // Thử nghiệm với cách tính toán ở trên trước.
+                    }
+                }, 50); // Giảm thời gian chờ, vì transition của submenu cũng đã giảm
+            }
+        };
+
+
+        // --- JavaScript cho Bong bóng (Giữ nguyên) ---
+        const bubbleColors = ['rgba(225,240,255,0.45)', 'rgba(220,255,235,0.45)', 'rgba(240,230,255,0.45)', 'rgba(255,235,240,0.45)'];
+        document.addEventListener('click', function (e) {
+            const interactiveElements = ['button', 'a', 'input', 'textarea', 'select', 'span', 'h2'];
+            let targetElement = e.target;
+            let clickedOnInteractive = false;
+            while (targetElement != null) {
+                const tagName = targetElement.tagName ? targetElement.tagName.toLowerCase() : '';
+                if (interactiveElements.includes(tagName) || targetElement.classList.contains('modal-content') || targetElement.closest('.modal-content') || targetElement.classList.contains('custom-title') || targetElement.closest('.custom-title')) {
+                    clickedOnInteractive = true;
+                    break;
+                }
+                targetElement = targetElement.parentElement;
+            }
+            if (clickedOnInteractive) return;
+
+            const numBubbles = Math.floor(Math.random() * 3) + 2;
+            for (let i = 0; i < numBubbles; i++) {
+                let bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                document.body.appendChild(bubble);
+                const size = Math.random() * 40 + 25;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.left = e.clientX + 'px';
+                bubble.style.top = e.clientY + 'px';
+                const chosenColorRgbaString = bubbleColors[Math.floor(Math.random() * bubbleColors.length)];
+                bubble.style.backgroundColor = chosenColorRgbaString;
+                try {
+                    const match = chosenColorRgbaString.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*[\d.]+)?\)/);
+                    if (match) { bubble.style.setProperty('--bubble-glow-color', `rgba(${match[1]},${match[2]},${match[3]},0.25)`); }
+                    else { bubble.style.setProperty('--bubble-glow-color', 'rgba(220,240,255,0.2)'); }
+                } catch (error) { bubble.style.setProperty('--bubble-glow-color', 'rgba(220,240,255,0.2)'); }
+                const driftX = (Math.random() - .5) * 120;
+                const driftY = (Math.random() * -120) - 100;
+                const endScale = Math.random() * .5 + .8;
+                bubble.style.setProperty('--bubble-drift-x', driftX + 'px');
+                bubble.style.setProperty('--bubble-drift-y', driftY + 'px');
+                bubble.style.setProperty('--bubble-end-scale', endScale);
+                bubble.style.animationDuration = (Math.random() * 1.5 + 2.5) + 's';
+                bubble.addEventListener('animationend', function () { bubble.remove(); });
+            }
+        });
+
     </script>
+
 </body>
 
 </html>
